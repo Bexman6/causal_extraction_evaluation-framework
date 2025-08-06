@@ -1,0 +1,214 @@
+import React, { useState } from 'react';
+import { Play, Database, FileJson, TrendingUp, Upload, Download } from 'lucide-react';
+import { TaskType, TabType, EvaluationMetric } from './types';
+import { useEvaluation } from './hooks/useEvaluation';
+import { usePrompts } from './hooks/usePrompts';
+import { useDataUpload } from './hooks/useDataUpload';
+import { exportResultsToJSON, exportDatabaseToCSV } from './utils/export';
+import { SetupTab } from './components/SetupTab';
+import { ProgressTab } from './components/ProgressTab';
+import { ResultsTab } from './components/ResultsTab';
+import { DatabaseTab } from './components/DatabaseTab';
+
+export default function CausalExtractionFramework() {
+  const [activeTab, setActiveTab] = useState<TabType>('setup');
+  const [selectedTask, setSelectedTask] = useState<TaskType>('entity_extraction');
+  const [selectedPrompts, setSelectedPrompts] = useState<string[]>([]);
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [selectedDataset, setSelectedDataset] = useState('dataset1');
+  const [jsonOutputFormat, setJsonOutputFormat] = useState(true);
+  const [evaluationMetrics, setEvaluationMetrics] = useState<EvaluationMetric[]>([
+    {
+      id: 'precision',
+      name: 'Precision',
+      description: 'Measures the accuracy of positive predictions',
+      enabled: true,
+      isBuiltIn: true
+    },
+    {
+      id: 'recall',
+      name: 'Recall',
+      description: 'Measures the coverage of actual positive cases',
+      enabled: true,
+      isBuiltIn: true
+    },
+    {
+      id: 'f1',
+      name: 'F1 Score',
+      description: 'Harmonic mean of precision and recall',
+      enabled: true,
+      isBuiltIn: true
+    }
+  ]);
+
+  const { currentRun, runHistory, isRunning, progress, runEvaluation } = useEvaluation();
+  const { 
+    prompts, 
+    showAddPrompt, 
+    newPrompt, 
+    showEditPrompt,
+    setShowAddPrompt, 
+    setNewPrompt, 
+    addPrompt, 
+    deletePrompt,
+    editPrompt,
+    updatePrompt,
+    resetEditPromptForm
+  } = usePrompts();
+  const { uploadedData, handleFileUpload } = useDataUpload();
+
+  const handleRunEvaluation = async () => {
+    setActiveTab('progress');
+    await runEvaluation(
+      selectedPrompts,
+      selectedModels,
+      selectedDataset,
+      selectedTask,
+      uploadedData,
+      prompts,
+      evaluationMetrics,
+      jsonOutputFormat
+    );
+    setActiveTab('results');
+  };
+
+  const handleAddPrompt = () => {
+    addPrompt(selectedTask);
+  };
+
+  const handleDeletePrompt = (promptId: string) => {
+    deletePrompt(promptId, selectedTask, setSelectedPrompts);
+  };
+
+  /**
+   * Handles editing a prompt by delegating to the usePrompts hook
+   * @param promptId - ID of the prompt to edit
+   */
+  const handleEditPrompt = (promptId: string) => {
+    editPrompt(promptId, selectedTask);
+  };
+
+  const handleExportResults = () => {
+    if (currentRun) {
+      exportResultsToJSON(currentRun);
+    }
+  };
+
+  const handleExportDatabase = () => {
+    exportDatabaseToCSV(runHistory);
+  };
+
+  const handleFileUploadWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleFileUpload(event, setSelectedDataset);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <h1 className="text-2xl font-bold text-gray-900">Causal Extraction Evaluation Framework</h1>
+            <div className="flex space-x-2">
+              <label className="flex items-center space-x-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 cursor-pointer">
+                <Upload className="w-4 h-4" />
+                <span>Upload Data</span>
+                <input
+                  type="file"
+                  accept=".json,.jsonl"
+                  onChange={handleFileUploadWrapper}
+                  className="hidden"
+                />
+              </label>
+              {currentRun && (
+                <button 
+                  onClick={handleExportResults}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Export Results</span>
+                </button>
+              )}
+              {runHistory.length > 0 && (
+                <button 
+                  onClick={handleExportDatabase}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  <Database className="w-4 h-4" />
+                  <span>Export Database</span>
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              {(['setup', 'progress', 'results', 'database'] as TabType[]).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`${
+                    activeTab === tab
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize flex items-center space-x-2`}
+                >
+                  {tab === 'setup' && <FileJson className="w-4 h-4" />}
+                  {tab === 'progress' && <Play className="w-4 h-4" />}
+                  {tab === 'results' && <TrendingUp className="w-4 h-4" />}
+                  {tab === 'database' && <Database className="w-4 h-4" />}
+                  <span>{tab}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'setup' && (
+          <SetupTab
+            selectedTask={selectedTask}
+            setSelectedTask={setSelectedTask}
+            selectedDataset={selectedDataset}
+            setSelectedDataset={setSelectedDataset}
+            uploadedData={uploadedData}
+            selectedPrompts={selectedPrompts}
+            setSelectedPrompts={setSelectedPrompts}
+            selectedModels={selectedModels}
+            setSelectedModels={setSelectedModels}
+            prompts={prompts}
+            showAddPrompt={showAddPrompt}
+            setShowAddPrompt={setShowAddPrompt}
+            newPrompt={newPrompt}
+            setNewPrompt={setNewPrompt}
+            onAddPrompt={handleAddPrompt}
+            onDeletePrompt={handleDeletePrompt}
+            onEditPrompt={handleEditPrompt}
+            onRunEvaluation={handleRunEvaluation}
+            showEditPrompt={showEditPrompt}
+            onUpdatePrompt={() => updatePrompt(selectedTask)}
+            onResetEditPromptForm={resetEditPromptForm}
+            evaluationMetrics={evaluationMetrics}
+            setEvaluationMetrics={setEvaluationMetrics}
+            jsonOutputFormat={jsonOutputFormat}
+            setJsonOutputFormat={setJsonOutputFormat}
+          />
+        )}
+        {activeTab === 'progress' && (
+          <ProgressTab
+            selectedPrompts={selectedPrompts}
+            selectedModels={selectedModels}
+            progress={progress}
+            isRunning={isRunning}
+          />
+        )}
+        {activeTab === 'results' && <ResultsTab currentRun={currentRun} />}
+        {activeTab === 'database' && (
+          <DatabaseTab
+            runHistory={runHistory}
+            uploadedData={uploadedData}
+          />
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,415 @@
+  Modular Structure Created:
+
+  📁 Directory Structure:
+  - src/types/ - TypeScript interfaces and types
+  - src/constants/ - Mock data and configuration
+  - src/utils/ - Pure utility functions (metrics, export, evaluation)
+  - src/hooks/ - Custom React hooks for state management
+  - src/components/ - Reusable UI components
+
+  🔧 Key Improvements:
+
+  1. Separated Concerns: Logic split into focused modules
+  2. Custom Hooks: State management logic extracted into reusable hooks
+  3. TypeScript Types: Proper type definitions for better code safety
+  4. Component Isolation: Each UI section is now a separate component
+  5. Utility Functions: Pure functions extracted for reusability
+
+  ✅ Build Status:
+  - TypeScript compilation successful
+  - Vite build successful (541KB bundle)
+  - Development server runs on localhost:5173
+
+  📂 Final Structure:
+  src/
+  ├── CausalExtractionFramework.tsx (Main orchestrator)
+  ├── types/index.ts (All interfaces)
+  ├── constants/index.ts (Mock data, prompts)
+  ├── utils/
+  │   ├── metrics.ts (Evaluation calculations)
+  │   ├── export.ts (JSON/CSV export)
+  │   └── evaluation.ts (Mock prediction logic)
+  ├── hooks/
+  │   ├── useEvaluation.ts (Evaluation state)
+  │   ├── usePrompts.ts (Prompt management)
+  │   └── useDataUpload.ts (File upload)
+  └── components/
+      ├── SetupTab.tsx
+      ├── ProgressTab.tsx
+      ├── ResultsTab.tsx
+      ├── DatabaseTab.tsx
+      ├── AddPromptModal.tsx
+      └── ResultDetailsModal.tsx
+
+  The application is now properly modularized with clear separation of concerns, making it maintainable and
+  following React best practices.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Project Overview & Structure
+
+  Your Causal Extraction Evaluation Framework is a modern
+  React/TypeScript web application. Here's what each file does:
+
+  ---
+  🏗️ Build & Configuration Files
+
+  package.json (lines 1-34)
+
+  - What it is: The "recipe book" for your project
+  - What it does:
+    - Lists all external libraries your app needs (React,
+  TypeScript, etc.)
+    - Defines scripts you can run (npm run dev, npm run build)
+    - Manages project metadata and dependencies
+
+  tsconfig.json (lines 1-24)
+
+  - What it is: TypeScript compiler configuration
+  - What it does:
+    - Tells TypeScript how to convert your .tsx files to
+  JavaScript
+    - Sets strict type checking rules (helps catch bugs early)
+    - Configures modern JavaScript features
+
+  vite.config.ts (lines 1-7)
+
+  - What it is: Build tool configuration
+  - What it does:
+    - Vite is a fast development server and build tool
+    - Handles hot reloading (instant updates when you save files)
+    - Bundles your code for production
+
+  index.html (lines 1-14)
+
+  - What it is: The main HTML page
+  - What it does:
+    - Loads Tailwind CSS for styling
+    - Creates a <div id="root"> where React renders your app
+    - Entry point that browsers load first
+
+  ---
+  🚪 Entry Point Files
+
+  src/main.tsx (lines 1-9)
+
+  - What it is: React application startup file
+  - What it does:
+    - Finds the root div in index.html
+    - Renders your main React component
+  (CausalExtractionFramework)
+    - Enables React's StrictMode for better development experience
+
+  src/index.ts (lines 1-9)
+
+  - What it is: Export barrel file
+  - What it does:
+    - Re-exports all your components, types, and utilities
+    - Makes importing easier (like a library's public API)
+    - Allows other projects to import your code cleanly
+
+  ---
+  📁 Core Application Structure
+
+  src/CausalExtractionFramework.tsx
+
+  - What it is: Main orchestrator component
+  - What it does:
+    - Combines all tabs and modals into one app
+    - Manages overall application state
+    - Acts as the "conductor" of your app
+
+  src/types/index.ts
+
+  - What it is: TypeScript type definitions
+  - What it does:
+    - Defines interfaces for data structures (Dataset,
+  EvaluationResult, etc.)
+    - Provides type safety (prevents bugs by catching type errors)
+    - Acts like a "contract" for how data should look
+
+  src/constants/index.ts
+
+  - What it is: Static data and configuration
+  - What it does:
+    - Contains mock datasets for testing
+    - Stores built-in prompt templates
+    - Holds model configurations and other constants
+
+  ---
+  🛠️ Utility Functions (src/utils/)
+
+  metrics.ts
+
+  - What it is: Evaluation calculation functions
+  - What it does:
+    - Calculates precision, recall, F1 scores
+    - Pure functions (no side effects)
+    - Mathematical logic for comparing predictions vs ground truth
+
+  export.ts
+
+  - What it is: Data export utilities
+  - What it does:
+    - Converts evaluation results to JSON/CSV formats
+    - Handles file downloads
+    - Data transformation for different export formats
+
+  evaluation.ts
+
+  - What it is: Mock prediction engine
+  - What it does:
+    - Simulates API calls to language models
+    - Generates fake predictions for testing
+    - Mimics real evaluation pipeline without external APIs
+
+  ---
+  🪝 Custom Hooks (src/hooks/)
+
+  Hooks are React's way of sharing stateful logic between
+  components.
+
+  useEvaluation.ts
+
+  - What it is: Evaluation state management
+  - What it does:
+    - Manages running evaluations (progress, results)
+    - Handles evaluation history
+    - Provides functions to start/stop evaluations
+
+  usePrompts.ts
+
+  - What it is: Prompt management logic
+  - What it does:
+    - Manages built-in and custom prompts
+    - Handles adding/deleting custom prompts
+    - Provides prompt selection state
+
+  useDataUpload.ts
+
+  - What it is: File upload management
+  - What it does:
+    - Handles file selection and parsing
+    - Validates dataset format
+    - Manages uploaded dataset storage
+
+  ---
+  🧩 UI Components (src/components/)
+
+  SetupTab.tsx
+
+  - What it is: Configuration interface
+  - What it does:
+    - Data upload interface
+    - Model and prompt selection
+    - Evaluation task configuration
+
+  ProgressTab.tsx
+
+  - What it is: Real-time evaluation monitoring
+  - What it does:
+    - Shows evaluation progress bars
+    - Displays current status
+    - Real-time updates during evaluation
+
+  ResultsTab.tsx
+
+  - What it is: Results visualization
+  - What it does:
+    - Charts and graphs of evaluation metrics
+    - Summary statistics
+    - Export functionality
+
+  DatabaseTab.tsx
+
+  - What it is: Historical data viewer
+  - What it does:
+    - Shows all past evaluation runs
+    - Allows filtering and searching results
+    - Detailed result inspection
+
+  AddPromptModal.tsx
+
+  - What it is: Custom prompt creation dialog
+  - What it does:
+    - Form for adding new prompt templates
+    - Variable substitution preview
+    - Prompt validation
+
+  ResultDetailsModal.tsx
+
+  - What it is: Detailed result inspector
+  - What it does:
+    - Shows sentence-by-sentence predictions
+    - Displays correct/incorrect classifications
+    - Detailed metric breakdowns
+
+  ---
+  🔄 How It All Works Together
+
+  1. index.html loads in browser
+  2. main.tsx starts the React app
+  3. CausalExtractionFramework.tsx renders the main interface
+  4. Components use hooks for state management
+  5. Utils handle calculations and data processing
+  6. Types ensure everything works together correctly
+
+  This modular structure makes the code maintainable, testable,
+  and reusable - key principles in professional React development!
+
+> Now do the same for all files outside of the given structure in 
+  this project apart from Claude.md and LAST_INFO.txt
+
+● I'll examine the other files in your project that aren't part of
+   the main modular structure. Let me check what these files
+  contain:
+
+● Read(ceev_v10.tsx.backup)
+  ⎿  Read 832 lines (ctrl+r to expand)
+
+● Read(test-modular.tsx)
+  ⎿  Read 5 lines (ctrl+r to expand)
+
+● Perfect! Now I can explain all the additional files in your
+  project:
+
+  📋 Additional Files Outside Main Structure
+
+  ceev_v10.tsx.backup (832 lines)
+
+  - What it is: The original monolithic version of your
+  application
+  - What it does:
+    - Contains the ENTIRE application in one massive file (before
+  modularization)
+    - Serves as a backup/reference of the original code
+    - Shows how the app worked when everything was in a single
+  component
+  - Why it's important:
+    - Safety net - if the modular version breaks, you can
+  reference this
+    - Historical record of the refactoring process
+    - Contains all the original logic that was split into separate
+   modules
+
+  test-modular.tsx (5 lines)
+
+  - What it is: Simple test wrapper component
+  - What it does:
+    - Imports and renders the new modular
+  CausalExtractionFramework
+    - Acts as a minimal test harness
+    - Allows testing the modular version separately
+  - Why it exists:
+    - Quick way to test if the modularization worked correctly
+    - Minimal entry point for debugging
+
+  node_modules/ (Directory)
+
+  - What it is: External dependencies storage
+  - What it does:
+    - Contains all the downloaded npm packages (React, TypeScript,
+   etc.)
+    - Automatically managed by npm/yarn
+    - Never edit this manually - it's regenerated when you run npm
+   install
+
+  dist/ (Directory)
+
+  - What it is: Built/compiled output directory
+  - What it does:
+    - Contains the final JavaScript files after building
+    - Generated when you run npm run build
+    - These are the files that would be deployed to a web server
+    - Never edit this manually - it's generated automatically
+
+  package-lock.json (Auto-generated)
+
+  - What it is: Exact dependency version lock file
+  - What it does:
+    - Records the EXACT versions of every package and
+  sub-dependency
+    - Ensures everyone gets identical installations
+    - Automatically generated/updated by npm
+    - Never edit this manually
+
+  ---
+  🔍 What This Tells Us About Your Project Evolution
+
+  Before Modularization (ceev_v10.tsx.backup):
+
+  One Giant File (832 lines)
+  ├── All components inline
+  ├── All logic mixed together
+  ├── Hard to maintain
+  └── Difficult to test individual parts
+
+  After Modularization (current structure):
+
+  Organized Structure
+  ├── src/CausalExtractionFramework.tsx (orchestrator)
+  ├── src/components/ (UI pieces)
+  ├── src/hooks/ (state logic)
+  ├── src/utils/ (calculations)
+  └── src/types/ (data contracts)
+
+  🎯 Key Differences You Should Understand
+
+  Old Approach (ceev_v10.tsx.backup):
+
+  - Everything in one file: Components, logic, data, calculations
+  all mixed
+  - Hard to debug: If something breaks, you have to search through
+   800+ lines
+  - Difficult to test: Can't test individual pieces in isolation
+  - Code reuse impossible: Logic is embedded in components
+
+  New Approach (current modular structure):
+
+  - Separation of concerns: Each file has ONE responsibility
+  - Easy to debug: Problem in metrics? Check utils/metrics.ts
+  - Testable: Each hook/utility can be tested independently
+  - Reusable: Hooks can be used in multiple components
+
+  🚀 Benefits for You as a Beginner
+
+  1. Learning: Each file teaches one concept (hooks, components,
+  utilities)
+  2. Debugging: Errors point to specific files/functions
+  3. Growth: You can modify one piece without breaking others
+  4. Best Practices: Follows professional React patterns
+
+  -------------------------------------------------------------------------
+
+   Summary
+
+  I have successfully implemented the JSON output format feature with all requested functionality:
+
+  ✅ Added JSON Output Format Checkbox
+  - Located in the Prompt Selection section of the Setup tab
+  - Checkbox is checked by default
+  - Includes explanatory text "(Instructs models to return structured JSON responses)"
+
+  ✅ State Management
+  - Added jsonOutputFormat state to CausalExtractionFramework.tsx (defaults to true)
+  - Properly passed through component hierarchy to SetupTab
+
+  ✅ Evaluation Logic Updates
+  - Modified useEvaluation hook to accept jsonOutputFormat parameter
+  - When enabled, appends JSON format instructions to prompts before LLM calls
+  - Entity extraction gets specific JSON instructions: "Response Format (strict JSON): Return a JSON object with a single key
+  "entities" whose value is an array of the extracted entity strings. Do not output any other text or explanation."
+  - Relationship extraction includes TODO comment for future implementation
+
+  ✅ Enhanced Results Display
+  - Updated ResultDetailsModal with improved configuration section
+  - Two-column layout showing both prompt template AND output format
+  - Output format displayed as color-coded badge (JSON in blue, Plain Text in gray)
+
+  ✅ Type Safety
+  - Added outputFormat field to EvaluationResult interface
+  - Results now store whether JSON or plain text format was used
+
+  The implementation is backward compatible and integrates seamlessly with the existing evaluation pipeline. The JSON format
+  preference is stored with each evaluation result for reference in the detailed results view.
