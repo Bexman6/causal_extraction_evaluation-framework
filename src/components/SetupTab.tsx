@@ -30,8 +30,8 @@ interface SetupTabProps {
   onResetEditPromptForm?: () => void;
   evaluationMetrics: EvaluationMetric[];
   setEvaluationMetrics: React.Dispatch<React.SetStateAction<EvaluationMetric[]>>;
-  jsonOutputFormat: boolean;
-  setJsonOutputFormat: (value: boolean) => void;
+  outputFormat: 'json' | 'raw';
+  setOutputFormat: (value: 'json' | 'raw') => void;
 }
 
 export const SetupTab: React.FC<SetupTabProps> = ({
@@ -58,8 +58,8 @@ export const SetupTab: React.FC<SetupTabProps> = ({
   onResetEditPromptForm,
   evaluationMetrics,
   setEvaluationMetrics,
-  jsonOutputFormat,
-  setJsonOutputFormat
+  outputFormat,
+  setOutputFormat
 }) => {
   const [showAddMetric, setShowAddMetric] = useState(false);
   const [selectedMetricSets, setSelectedMetricSets] = useState<string[]>(['standard']);
@@ -208,7 +208,10 @@ export const SetupTab: React.FC<SetupTabProps> = ({
             <input
               type="radio"
               checked={selectedTask === 'entity_extraction'}
-              onChange={() => setSelectedTask('entity_extraction')}
+              onChange={() => {
+                setSelectedTask('entity_extraction');
+                setSelectedPrompts([]);
+              }}
               className="text-blue-600"
             />
             <span>Causal Entity Extraction</span>
@@ -217,7 +220,10 @@ export const SetupTab: React.FC<SetupTabProps> = ({
             <input
               type="radio"
               checked={selectedTask === 'relationship_extraction'}
-              onChange={() => setSelectedTask('relationship_extraction')}
+              onChange={() => {
+                setSelectedTask('relationship_extraction');
+                setSelectedPrompts([]);
+              }}
               className="text-blue-600"
             />
             <span>Causal Relationship Extraction</span>
@@ -249,26 +255,43 @@ export const SetupTab: React.FC<SetupTabProps> = ({
           </button>
         </div>
         
-        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={jsonOutputFormat}
-              onChange={(e) => setJsonOutputFormat(e.target.checked)}
-              className="text-blue-600"
-            />
-            <span className="font-medium">JSON Output Format</span>
-            <span className="text-sm text-gray-600">(Instructs models to return structured JSON responses)</span>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setShowJsonPreview(true);
-              }}
-              className="ml-auto text-blue-600 hover:text-blue-800 text-sm"
-            >
-              Preview Format
-            </button>
-          </label>
+        <div className="mb-3 p-2 bg-gray-50 rounded border border-gray-200">
+          <div className="space-y-1">
+            <label className="flex items-center space-x-2 cursor-pointer text-sm">
+              <input
+                type="radio"
+                name="outputFormat"
+                value="json"
+                checked={outputFormat === 'json'}
+                onChange={(e) => setOutputFormat(e.target.value as 'json' | 'raw')}
+                className="text-blue-600 w-3.5 h-3.5"
+              />
+              <span className="text-gray-700">JSON Output Format</span>
+              <span className="text-xs text-gray-500">(Instructs models to return 
+     structured JSON responses)</span>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowJsonPreview(true);
+                }}
+                className="ml-auto text-blue-500 hover:text-blue-700 text-xs"
+              >
+                Preview
+              </button>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer text-sm">
+              <input
+                type="radio"
+                name="outputFormat"
+                value="raw"
+                checked={outputFormat === 'raw'}
+                onChange={(e) => setOutputFormat(e.target.value as 'json' | 'raw')}
+                className="text-blue-600 w-3.5 h-3.5"
+              />
+              <span className="text-gray-700">Raw Output</span>
+              <span className="text-xs text-gray-500">(No instruction to the model how to display response)</span>
+            </label>
+          </div>
         </div>
         
         <div className="space-y-4">

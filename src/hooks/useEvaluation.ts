@@ -22,7 +22,7 @@ export const useEvaluation = () => {
     uploadedData: Record<string, Dataset>,
     prompts: Record<string, Prompt[]>,
     evaluationMetrics: EvaluationMetric[],
-    jsonOutputFormat: boolean = false
+    outputFormat: 'json' | 'raw' = 'json'
   ) => {
     setIsRunning(true);
     
@@ -30,9 +30,9 @@ export const useEvaluation = () => {
     const results: EvaluationResult[] = [];
     const sentences = uploadedData[selectedDataset].sentences;
     
-    // Calculate total operations for progress tracking
-    const totalOperations = selectedPrompts.length * selectedModels.length;
-    let currentOperation = 0;
+    // Calculate total operations for progress tracking (each sentence needs to be processed for each prompt-model combination)
+    const totalOperations = selectedPrompts.length * selectedModels.length * sentences.length;
+    let completedOperations = 0;
 
     // Reset progress
     setProgress({
@@ -50,33 +50,34 @@ export const useEvaluation = () => {
           const modelConfig = modelConfigs.find(m => m.id === modelId);
           if (!modelConfig) continue;
 
-          currentOperation++;
-          
-          // Update progress
+          // Set current model and prompt info
           setProgress(prev => ({
             ...prev,
-            current: currentOperation,
             currentModel: modelConfig.name,
             currentPrompt: prompt.name
           }));
 
           try {
-            // Prepare prompt template with JSON format instructions if enabled
+            // Prepare prompt template with format instructions if needed
             let finalPromptTemplate = prompt.template;
-            if (jsonOutputFormat) {
+            if (outputFormat === 'json') {
               const jsonInstructions = jsonFormatTemplates[selectedTask].instructions;
               finalPromptTemplate = prompt.template + jsonInstructions;
             }
+            // For 'raw' format, no additional instructions are added
 
-            // Process evaluation with real LLM
+            // Process evaluation with LLM
             const sentenceResults = await processEvaluationWithLLM(
               sentences,
               selectedTask,
               modelConfig,
               finalPromptTemplate,
-              (_, __, currentSentence) => {
+              (completedSentences, totalSentences, currentSentence) => {
+                // Update global progress based on completed sentences across all combinations
+                completedOperations++;
                 setProgress(prev => ({
                   ...prev,
+                  current: completedOperations,
                   currentSentence: currentSentence ? `Processing: ${currentSentence.substring(0, 50)}...` : undefined
                 }));
               }
@@ -97,7 +98,7 @@ export const useEvaluation = () => {
               metrics,
               sentenceResults,
               selectedMetrics: selectedMetricIds,
-              outputFormat: jsonOutputFormat ? 'json' : 'plain_text'
+              outputFormat
             };
             
             results.push(result);

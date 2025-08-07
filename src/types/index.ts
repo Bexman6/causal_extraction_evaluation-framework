@@ -53,7 +53,7 @@ export interface EvaluationResult {
   metrics: EvaluationMetrics;
   sentenceResults: SentenceResult[];
   selectedMetrics: string[];
-  outputFormat: 'json' | 'plain_text';
+  outputFormat: 'json' | 'raw';
 }
 
 export interface EvaluationRun {

@@ -33,3 +33,51 @@ dist-ssr
 # API Keys
 .anthropic_key
 .openai_key
+
+# Build outputs
+build/
+out/
+.next/
+.nuxt/
+
+# Testing
+coverage/
+.nyc_output
+.jest/
+__tests__/__snapshots__/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# Package manager lock files (choose one based on your preference)
+# yarn.lock
+# package-lock.json
+# pnpm-lock.yaml
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+.tmp/
+temp/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# React/JS specific
+.storybook/
+storybook-static/
+public/hot-update.*
+
+# LLM agent settings
+.claude
+claude.md

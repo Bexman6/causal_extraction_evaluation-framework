@@ -17,7 +17,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
 }) => {
   const progressPercentage = progress.total > 0 ? (progress.current / progress.total) * 100 : 0;
   const isCompleted = progress.current === progress.total && progress.total > 0;
-
+  
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
@@ -33,7 +33,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
           {/* Progress Bar */}
           <div>
             <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Progress: {progress.current} / {progress.total} combinations</span>
+              <span>Progress: {progress.current} / {progress.total} evaluations</span>
               <span>{Math.round(progressPercentage)}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3">

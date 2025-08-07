@@ -16,7 +16,7 @@ export default function CausalExtractionFramework() {
   const [selectedPrompts, setSelectedPrompts] = useState<string[]>([]);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [selectedDataset, setSelectedDataset] = useState('dataset1');
-  const [jsonOutputFormat, setJsonOutputFormat] = useState(true);
+  const [outputFormat, setOutputFormat] = useState<'json' | 'raw'>('json');
   const [evaluationMetrics, setEvaluationMetrics] = useState<EvaluationMetric[]>([
     {
       id: 'precision',
@@ -67,7 +67,7 @@ export default function CausalExtractionFramework() {
       uploadedData,
       prompts,
       evaluationMetrics,
-      jsonOutputFormat
+      outputFormat
     );
     setActiveTab('results');
   };
@@ -189,8 +189,8 @@ export default function CausalExtractionFramework() {
             onResetEditPromptForm={resetEditPromptForm}
             evaluationMetrics={evaluationMetrics}
             setEvaluationMetrics={setEvaluationMetrics}
-            jsonOutputFormat={jsonOutputFormat}
-            setJsonOutputFormat={setJsonOutputFormat}
+            outputFormat={outputFormat}
+            setOutputFormat={setOutputFormat}
           />
         )}
         {activeTab === 'progress' && (

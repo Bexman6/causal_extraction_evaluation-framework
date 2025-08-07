@@ -22,7 +22,7 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
   
   const chartData = currentRun.results.map(r => {
     const data: any = {
-      name: `${r.promptName.split(' ')[0]}-${r.model.split('-').pop()}`
+      name: `${r.promptName}-${r.model}`
     };
     
     // Add built-in metrics if selected

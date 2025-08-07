@@ -2,6 +2,7 @@ import { TaskType, Sentence, SentenceResult, ModelConfig, APIResponse, LLMReques
 import { LLMServiceFactory, substitutePromptVariables, retryWithBackoff } from '../services/llmService';
 import { parseResponse, validateParsedResponse } from './responseParser';
 
+// To be removed
 export const generateMockPredictions = (sentence: Sentence, task: TaskType): any[] => {
   if (task === 'entity_extraction') {
     const allEntities = ["heavy rain", "flooding", "city", "weather", "damage", "smoking", "risk", "lung cancer", "health"];
@@ -15,6 +16,7 @@ export const generateMockPredictions = (sentence: Sentence, task: TaskType): any
   }
 };
 
+// To be removed
 export const processEvaluationData = (
   sentences: Sentence[], 
   task: TaskType
@@ -40,11 +42,6 @@ export const processEvaluationWithLLM = async (
   for (let i = 0; i < sentences.length; i++) {
     const sentence = sentences[i];
     
-    // Update progress
-    if (onProgress) {
-      onProgress(i, sentences.length, sentence.text);
-    }
-
     try {
       // Substitute variables in prompt template
       const prompt = substitutePromptVariables(promptTemplate, {
@@ -93,6 +90,11 @@ export const processEvaluationWithLLM = async (
 
       results.push(result);
 
+      // Update progress after successful API response
+      if (onProgress) {
+        onProgress(i + 1, sentences.length, sentence.text);
+      }
+
       // Add delay between requests to avoid rate limiting
       if (i < sentences.length - 1) {
         await delay(500);
@@ -115,6 +117,12 @@ export const processEvaluationWithLLM = async (
       };
 
       results.push(result);
+      
+      // Update progress after error response
+      if (onProgress) {
+        onProgress(i + 1, sentences.length, sentence.text);
+      }
+      
       console.error(`Error processing sentence ${sentence.id}:`, error);
     }
   }

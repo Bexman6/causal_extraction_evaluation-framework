@@ -31,6 +31,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedDa
       avgF1: number; 
       totalF1: number; 
       bestModel: string; 
+      bestPrompt: string;
       bestF1: number; 
     }> = {};
     
@@ -44,6 +45,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedDa
           avgF1: 0, 
           totalF1: 0, 
           bestModel: r.model, 
+          bestPrompt: r.promptName,
           bestF1: r.metrics.f1 
         };
       }
@@ -52,9 +54,10 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedDa
       grouped[key].totalF1 += r.metrics.f1;
       grouped[key].avgF1 = grouped[key].totalF1 / grouped[key].runs;
       
-      // Track best performing model for this task/dataset combination
+      // Track best performing model and prompt for this task/dataset combination
       if (r.metrics.f1 > grouped[key].bestF1) {
         grouped[key].bestModel = r.model;
+        grouped[key].bestPrompt = r.promptName;
         grouped[key].bestF1 = r.metrics.f1;
       }
     });
@@ -127,6 +130,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedDa
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dataset</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg F1</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Best Model</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Best Prompt</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Best F1</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Runs</th>
               </tr>
@@ -138,6 +142,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedDa
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{data.dataset}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{data.avgF1.toFixed(3)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{data.bestModel}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{data.bestPrompt}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{data.bestF1.toFixed(3)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{data.runs}</td>
                 </tr>
