@@ -72,7 +72,8 @@ export const useEvaluation = () => {
               selectedTask,
               modelConfig,
               finalPromptTemplate,
-              (completedSentences, totalSentences, currentSentence) => {
+              prompt.name,
+              (_completedSentences, _totalSentences, currentSentence) => {
                 // Update global progress based on completed sentences across all combinations
                 completedOperations++;
                 setProgress(prev => ({

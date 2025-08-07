@@ -34,10 +34,18 @@ export const processEvaluationWithLLM = async (
   task: TaskType,
   model: ModelConfig,
   promptTemplate: string,
+  promptName: string,
   onProgress?: (current: number, total: number, currentSentence?: string) => void
 ): Promise<SentenceResult[]> => {
   const results: SentenceResult[] = [];
   const service = LLMServiceFactory.getService(model);
+
+
+  console.log(`🔍 Processing ${sentences.length} sentences for task: ${task}
+    Using model: ${model.name}
+    Using prompt: ${promptName}`);
+
+
 
   for (let i = 0; i < sentences.length; i++) {
     const sentence = sentences[i];

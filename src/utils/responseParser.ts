@@ -10,10 +10,77 @@ export interface ParsedRelationshipResponse {
   confidence?: number;
 }
 
+/**
+ * Extracts JSON content from responses that may have prefixed text or code block formatting
+ */
+const extractJsonFromResponse = (response: string): string | null => {
+  // First, try to extract from code blocks (```json ... ``` or ``` ... ```)
+  const codeBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  if (codeBlockMatch) {
+    return codeBlockMatch[1].trim();
+  }
+  
+  // Look for JSON arrays in the response
+  const arrayMatch = response.match(/(\[[\s\S]*?\])/);
+  if (arrayMatch) {
+    // Validate it's likely JSON by checking for quotes and braces
+    const candidate = arrayMatch[1];
+    if (candidate.includes('{') && candidate.includes('"')) {
+      return candidate.trim();
+    }
+  }
+  
+  // Look for JSON objects in the response
+  const objectMatch = response.match(/(\{[\s\S]*?\})/);
+  if (objectMatch) {
+    const candidate = objectMatch[1];
+    if (candidate.includes('"')) {
+      return candidate.trim();
+    }
+  }
+  
+  // Try to find JSON after common prefixes
+  const prefixPatterns = [
+    /(?:Here is|Here's|The output is|Output:|Result:|The result is|Below is)[\s\S]*?(\[[\s\S]*?\])/i,
+    /(?:Here is|Here's|The output is|Output:|Result:|The result is|Below is)[\s\S]*?(\{[\s\S]*?\})/i
+  ];
+  
+  for (const pattern of prefixPatterns) {
+    const match = response.match(pattern);
+    if (match) {
+      return match[1].trim();
+    }
+  }
+  
+  return null;
+};
+
 export const parseEntityExtractionResponse = (response: string): ParsedEntityResponse => {
-  console.log(response)
+  console.log("Parsing entity extraction response:\n", response);
+  
+  // First, try to extract JSON from prefixed text or code blocks
+  const extractedJson = extractJsonFromResponse(response);
+  if (extractedJson) {
+    try {
+      const jsonParsed = JSON.parse(extractedJson);
+      
+      if (Array.isArray(jsonParsed)) {
+        return { entities: jsonParsed.filter((item: any) => typeof item === 'string') };
+      }
+      
+      if (jsonParsed.entities && Array.isArray(jsonParsed.entities)) {
+        return {
+          entities: jsonParsed.entities.filter((item: any) => typeof item === 'string'),
+          confidence: jsonParsed.confidence
+        };
+      }
+    } catch {
+      // If extracted JSON parsing fails, continue to direct parsing attempt
+    }
+  }
+  
   try {
-    // Try parsing as JSON first
+    // Try parsing the entire response as JSON directly
     const jsonParsed = JSON.parse(response);
     
     if (Array.isArray(jsonParsed)) {
@@ -67,14 +134,49 @@ export const parseEntityExtractionResponse = (response: string): ParsedEntityRes
       .filter(entity => !entity.match(/^(the|a|an|and|or|but|in|on|at|to|for|of|with|by)$/i)) // Remove common stop words
   )];
   
-  console.log('Parsed entities:', cleanedEntities);
 
   return { entities: cleanedEntities };
 };
 
 export const parseRelationshipExtractionResponse = (response: string): ParsedRelationshipResponse => {
+  
+  console.log("Parsing relationship extraction response:\n", response);
+  
+  // First, try to extract JSON from prefixed text or code blocks
+  const extractedJson = extractJsonFromResponse(response);
+  if (extractedJson) {
+    try {
+      const jsonParsed = JSON.parse(extractedJson);
+      
+      if (Array.isArray(jsonParsed)) {
+        const relationships = jsonParsed
+          .filter((item: any) => item && typeof item === 'object' && item.cause && item.effect)
+          .map((item: any) => ({
+            cause: String(item.cause),
+            effect: String(item.effect)
+          }));
+        return { relationships };
+      }
+      
+      if (jsonParsed.relationships && Array.isArray(jsonParsed.relationships)) {
+        const relationships = jsonParsed.relationships
+          .filter((item: any) => item && typeof item === 'object' && item.cause && item.effect)
+          .map((item: any) => ({
+            cause: String(item.cause),
+            effect: String(item.effect)
+          }));
+        return {
+          relationships,
+          confidence: jsonParsed.confidence
+        };
+      }
+    } catch {
+      // If extracted JSON parsing fails, continue to direct parsing attempt
+    }
+  }
+  
   try {
-    // Try parsing as JSON first
+    // Try parsing the entire response as JSON directly
     const jsonParsed = JSON.parse(response);
     
     if (Array.isArray(jsonParsed)) {
@@ -82,9 +184,7 @@ export const parseRelationshipExtractionResponse = (response: string): ParsedRel
         .filter((item: any) => item && typeof item === 'object' && item.cause && item.effect)
         .map((item: any) => ({
           cause: String(item.cause),
-          effect: String(item.effect),
-          location: item.location ? String(item.location) : undefined,
-          confidence: item.confidence ? Number(item.confidence) : undefined
+          effect: String(item.effect)
         }));
       return { relationships };
     }
@@ -94,9 +194,7 @@ export const parseRelationshipExtractionResponse = (response: string): ParsedRel
         .filter((item: any) => item && typeof item === 'object' && item.cause && item.effect)
         .map((item: any) => ({
           cause: String(item.cause),
-          effect: String(item.effect),
-          location: item.location ? String(item.location) : undefined,
-          confidence: item.confidence ? Number(item.confidence) : undefined
+          effect: String(item.effect)
         }));
       return {
         relationships,

@@ -91,7 +91,7 @@ export const initialPrompts: Record<string, Prompt[]> = {
     {
       "id": "ee_prompt_2",
       "name": "Detailed Entity Extraction",
-      "template": "Identify and extract all entities involved in causal relationships in this text: {text}. Format as JSON array.",
+      "template": "Identify and extract all entities involved in causal relationships in this text: {text}.",
       "isCustom": false
     }
   ],
@@ -99,13 +99,16 @@ export const initialPrompts: Record<string, Prompt[]> = {
     {
       "id": "re_prompt_1",
       "name": "Basic Relationship Extraction",
-      "template": "Extract causal relationships from: {text}",
+      "template": `Extract causal relationships from the following text based on the identified entities "{entities}": {text}"`,
       "isCustom": false
     },
     {
       "id": "re_prompt_2",
       "name": "Structured Relationship Extraction",
-      "template": "Find all cause-effect relationships in: {text}. Return as JSON with 'cause' and 'effect' fields.",
+      "template": 
+      `Text: "{input_text}"
+      Entities: {entities}
+      Based on the text and identified entities, extract causal relationships.`,
       "isCustom": false
     }
   ]
@@ -121,18 +124,25 @@ export const jsonFormatTemplates = {
     description: "Entity extraction returns a JSON object with an 'entities' array containing all identified causal entities from the text."
   },
   relationship_extraction: {
-    instructions: '\n\n// TODO: Add JSON format instructions for relationship extraction',
+
+    instructions: `Response Format (strict JSON): Return the output as a list of JSON objects with the following structure and do not output any other text or explanation.
+
+  [
+    {
+      "cause": "<entity from list>",
+      "effect": "<entity from list>"
+    },
+    ...
+  ]`,
     example: {
-      // TODO: Add example structure for relationship extraction
       relationships: [
         {
-          cause: "TODO",
-          effect: "TODO", 
-          confidence: "TODO"
+          cause: "cause_entity",
+          effect: "effect_entity"
         }
       ]
     },
-    description: "TODO: Relationship extraction format - structure not yet implemented"
+    description: "Relationship extraction returns a JSON array of objects, each containing 'cause' and 'effect' keys representing the causal relationships identified in the given text."
   }
 };
 

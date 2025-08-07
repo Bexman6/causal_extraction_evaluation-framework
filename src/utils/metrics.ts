@@ -46,9 +46,12 @@ export const calculateMetrics = (
     const predictions = result.predictions;
     const goldData = result.goldData;
 
-    console.log(`Calculating metrics for sentence: ${result.text}`);
-    console.log(`Predictions: ${JSON.stringify(predictions)}`);
-    console.log(`Gold Data: ${JSON.stringify(goldData)}`);
+    console.log(`
+    -----------------------------------------------------
+    Calculating metrics:
+    Predictions: ${JSON.stringify(predictions)}
+    Gold Data: ${JSON.stringify(goldData)}
+    -----------------------------------------------------`);
 
     if (task === 'entity_extraction') {
       // For entity extraction: compare entity strings (case-insensitive)

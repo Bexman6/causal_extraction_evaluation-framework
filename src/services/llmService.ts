@@ -1,7 +1,5 @@
-import { ChatAnthropic } from '@langchain/anthropic';
-import { ChatOpenAI } from '@langchain/openai';
-import { HumanMessage } from '@langchain/core/messages';
 import { ModelConfig, APIResponse, LLMRequest } from '../types';
+import { ProxyLLMServiceFactory, ProxyLLMService } from './proxyApiService';
 
 export interface LLMService {
   callModel(request: LLMRequest): Promise<APIResponse>;
@@ -9,136 +7,46 @@ export interface LLMService {
 }
 
 class AnthropicService implements LLMService {
-  private client: ChatAnthropic | null = null;
+  private proxyService: ProxyLLMService;
 
-  private initializeClient(modelId: string, temperature = 0.0, maxTokens = 1000): ChatAnthropic {
-    const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      throw new Error('Anthropic API key not found in environment variables');
-    }
-
-    return new ChatAnthropic({
-      apiKey,
-      model: modelId,
-      temperature,
-      maxTokens,
+  constructor() {
+    this.proxyService = ProxyLLMServiceFactory.getService({
+      id: 'anthropic',
+      name: 'Anthropic',
+      provider: 'anthropic',
+      modelId: 'claude-3-sonnet-20240229',
+      supportedTasks: ['entity_extraction', 'relationship_extraction']
     });
   }
 
   async callModel(request: LLMRequest): Promise<APIResponse> {
-    const startTime = Date.now();
-    
-    try {
-      this.client = this.initializeClient(
-        request.model.modelId,
-        request.temperature ?? 0.0,
-        request.maxTokens ?? 1000
-      );
-
-      const message = new HumanMessage({ content: request.prompt });
-      const response = await this.client.invoke([message]);
-      
-      const latency = Date.now() - startTime;
-
-      return {
-        success: true,
-        content: response.content.toString(),
-        latency,
-        tokens: {
-          input: 0, // LangChain doesn't provide token counts by default
-          output: 0,
-          total: 0
-        }
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        latency: Date.now() - startTime
-      };
-    }
+    return this.proxyService.callModel(request);
   }
 
   async validateApiKeys(): Promise<boolean> {
-    try {
-      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-      if (!apiKey) return false;
-
-      // Test with a simple prompt
-      const testClient = this.initializeClient('claude-3-haiku-20240307', 0.1, 10);
-      const testMessage = new HumanMessage({ content: 'Test' });
-      await testClient.invoke([testMessage]);
-      return true;
-    } catch {
-      return false;
-    }
+    return this.proxyService.validateApiKeys();
   }
 }
 
 class OpenAIService implements LLMService {
-  private client: ChatOpenAI | null = null;
+  private proxyService: ProxyLLMService;
 
-  private initializeClient(modelId: string, temperature = 0.0, maxTokens = 1000): ChatOpenAI {
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error('OpenAI API key not found in environment variables');
-    }
-
-    return new ChatOpenAI({
-      apiKey,
-      model: modelId,
-      temperature,
-      maxTokens,
+  constructor() {
+    this.proxyService = ProxyLLMServiceFactory.getService({
+      id: 'openai',
+      name: 'OpenAI',
+      provider: 'openai',
+      modelId: 'gpt-4',
+      supportedTasks: ['entity_extraction', 'relationship_extraction']
     });
   }
 
   async callModel(request: LLMRequest): Promise<APIResponse> {
-    const startTime = Date.now();
-    
-    try {
-      this.client = this.initializeClient(
-        request.model.modelId,
-        request.temperature ?? 0.0,
-        request.maxTokens ?? 1000
-      );
-
-      const message = new HumanMessage({ content: request.prompt });
-      const response = await this.client.invoke([message]);
-      
-      const latency = Date.now() - startTime;
-
-      return {
-        success: true,
-        content: response.content.toString(),
-        latency,
-        tokens: {
-          input: 0, // LangChain doesn't provide token counts by default
-          output: 0,
-          total: 0
-        }
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        latency: Date.now() - startTime
-      };
-    }
+    return this.proxyService.callModel(request);
   }
 
   async validateApiKeys(): Promise<boolean> {
-    try {
-      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      if (!apiKey) return false;
-
-      // Test with a simple prompt
-      const testClient = this.initializeClient('gpt-3.5-turbo', 0.1, 10);
-      const testMessage = new HumanMessage({ content: 'Test' });
-      await testClient.invoke([testMessage]);
-      return true;
-    } catch {
-      return false;
-    }
+    return this.proxyService.validateApiKeys();
   }
 }
 
@@ -158,22 +66,7 @@ export class LLMServiceFactory {
   }
 
   static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean }> {
-    try {
-      const [anthropicValid, openaiValid] = await Promise.all([
-        this.anthropicService.validateApiKeys(),
-        this.openaiService.validateApiKeys()
-      ]);
-
-      return {
-        anthropic: anthropicValid,
-        openai: openaiValid
-      };
-    } catch {
-      return {
-        anthropic: false,
-        openai: false
-      };
-    }
+    return ProxyLLMServiceFactory.validateAllApiKeys();
   }
 }
 
