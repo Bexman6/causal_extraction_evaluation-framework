@@ -41,7 +41,7 @@ export default function CausalExtractionFramework() {
     }
   ]);
 
-  const { currentRun, runHistory, isRunning, progress, runEvaluation } = useEvaluation();
+  const { currentRun, runHistory, isRunning, progress, runEvaluation, clearStoredResults } = useEvaluation();
   const { 
     prompts, 
     showAddPrompt, 
@@ -122,10 +122,11 @@ export default function CausalExtractionFramework() {
               {currentRun && (
                 <button 
                   onClick={handleExportResults}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-200 rounded hover:bg-blue-300"
+                  title="Export only the current evaluation run results"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Export Results</span>
+                  <span>Export Current Run</span>
                 </button>
               )}
               {runHistory.length > 0 && (
@@ -206,6 +207,7 @@ export default function CausalExtractionFramework() {
           <DatabaseTab
             runHistory={runHistory}
             uploadedData={uploadedData}
+            onClearResults={clearStoredResults}
           />
         )}
       </div>

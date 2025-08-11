@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
               console.log('📤 Anthropic proxy request:', req.method, req.url)
               console.log('📤 Headers being sent:', proxyReq.getHeaders())
             })
-            proxy.on('proxyRes', (proxyRes, req, res) => {
+            proxy.on('proxyRes', (proxyRes, req, _res) => {
               console.log('📥 Anthropic proxy response:', proxyRes.statusCode, req.url)
               
               // Log error response bodies for debugging

@@ -52,11 +52,20 @@ export const processEvaluationWithLLM = async (
     
     try {
       // Substitute variables in prompt template
-      const prompt = substitutePromptVariables(promptTemplate, {
+      const variables: Record<string, string> = {
         text: sentence.text,
         task: task === 'entity_extraction' ? 'entities' : 'relationships'
-      });
+      };
 
+      // Add entities variable for relationship extraction
+      if (task === 'relationship_extraction') {
+        variables.entities = sentence.gold_entities.join(', ');
+      }
+
+      const prompt = substitutePromptVariables(promptTemplate, variables);
+
+      console.log("This prompt will be sent to the LLM:\n" + prompt)
+      
       const request: LLMRequest = {
         prompt,
         model,

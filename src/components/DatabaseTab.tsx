@@ -1,14 +1,18 @@
 import React, { useState, useMemo } from 'react';
+import { Trash2, Upload, Info, Package } from 'lucide-react';
 import { EvaluationResult, Dataset } from '../types';
+import { EvaluationStorageService } from '../services/evaluationStorage';
 
 interface DatabaseTabProps {
   runHistory: EvaluationResult[];
   uploadedData: Record<string, Dataset>;
+  onClearResults?: () => void;
 }
 
-export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedData }) => {
+export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedData, onClearResults }) => {
   const [sortBy, setSortBy] = useState('f1');
   const [filterBy, setFilterBy] = useState('all');
+  const [showStorageInfo, setShowStorageInfo] = useState(false);
   
   const sortedHistory = useMemo(() => {
     let filtered = runHistory;
@@ -65,8 +69,119 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({ runHistory, uploadedDa
     return Object.values(grouped);
   }, [runHistory]);
 
+  // Storage management functions
+  const handleClearResults = () => {
+    if (window.confirm('Are you sure you want to clear all evaluation results? This action cannot be undone.')) {
+      if (onClearResults) {
+        onClearResults();
+      }
+    }
+  };
+
+  const handleExportResults = () => {
+    try {
+      const jsonData = EvaluationStorageService.exportToJSON();
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `evaluation-results-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to export results:', error);
+      alert('Failed to export results. Please try again.');
+    }
+  };
+
+  const handleImportResults = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const jsonData = e.target?.result as string;
+        const success = EvaluationStorageService.importFromJSON(jsonData, false);
+        if (success) {
+          alert('Results imported successfully! Please refresh the page to see the imported data.');
+        } else {
+          alert('Failed to import results. Please check the file format.');
+        }
+      } catch (error) {
+        console.error('Failed to import results:', error);
+        alert('Failed to import results. Please check the file format.');
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset the input
+    event.target.value = '';
+  };
+
+  const storageInfo = EvaluationStorageService.getStorageInfo();
+  const metadata = EvaluationStorageService.getMetadata();
+
   return (
     <div className="space-y-6">
+      {/* Storage Management Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Storage Management</h3>
+          <button
+            onClick={() => setShowStorageInfo(!showStorageInfo)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <Info className="w-5 h-5" />
+          </button>
+        </div>
+        
+        {showStorageInfo && (
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg text-sm">
+            <p><strong>Total Results:</strong> {metadata.totalResults}</p>
+            <p><strong>Total Runs:</strong> {metadata.totalRuns}</p>
+            <p><strong>Storage Used:</strong> {storageInfo.usedKB} KB</p>
+            <p><strong>Last Updated:</strong> {metadata.lastUpdated ? new Date(metadata.lastUpdated).toLocaleString() : 'Never'}</p>
+          </div>
+        )}
+        
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={handleExportResults}
+            className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            title="Export complete evaluation history from persistent storage"
+          >
+            <Package className="w-4 h-4" />
+            <span>Export All Data</span>
+          </button>
+          
+          <label className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+                 title="Import evaluation results from a JSON file">
+            <Upload className="w-4 h-4" />
+            <span>Import Data</span>
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportResults}
+              className="hidden"
+            />
+          </label>
+          
+          {onClearResults && (
+            <button
+              onClick={handleClearResults}
+              className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              title="Permanently delete all stored evaluation results"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Clear All Results</span>
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Run History</h3>

@@ -99,14 +99,15 @@ export const initialPrompts: Record<string, Prompt[]> = {
     {
       "id": "re_prompt_1",
       "name": "Basic Relationship Extraction",
-      "template": `Extract causal relationships from the following text based on the identified entities "{entities}": {text}"`,
+      "template": `Extract causal relationships from the following text based on the identified entities "{entities}": 
+      {text}`,
       "isCustom": false
     },
     {
       "id": "re_prompt_2",
       "name": "Structured Relationship Extraction",
       "template": 
-      `Text: "{input_text}"
+      `Text: "{text}"
       Entities: {entities}
       Based on the text and identified entities, extract causal relationships.`,
       "isCustom": false
