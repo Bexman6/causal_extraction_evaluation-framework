@@ -64,7 +64,10 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis domain={[0, 1]} />
-              <Tooltip />
+              <Tooltip 
+                labelFormatter={(label) => `${label}`}
+                formatter={(value: number, name: string) => [value.toFixed(3), name]}                
+              />
               <Legend />
               {Array.from(allSelectedMetrics).map(metric => (
                 <Bar 

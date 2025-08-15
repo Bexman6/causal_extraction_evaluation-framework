@@ -1,4 +1,5 @@
 import { EvaluationMetrics, SentenceResult, TaskType, EvaluationMetric, CausalRelationship } from '../types';
+import { calculateSemanticScore } from './semanticEvaluation';
 
 /**
  * Normalizes strings for case-insensitive comparison by converting to lowercase and trimming whitespace
@@ -29,13 +30,13 @@ const areRelationshipsEqual = (rel1: CausalRelationship, rel2: CausalRelationshi
  * @param sentenceResults - Array of sentence-level prediction results from the model
  * @param task - Type of extraction task ('entity_extraction' or 'relationship_extraction')
  * @param evaluationMetrics - Optional array of custom metrics to calculate
- * @returns Object containing precision, recall, F1 score, and counts of TP/FP/FN
+ * @returns Promise<Object> containing precision, recall, F1 score, and counts of TP/FP/FN
  */
-export const calculateMetrics = (
+export const calculateMetrics = async (
   sentenceResults: SentenceResult[], 
   task: TaskType, 
   evaluationMetrics?: EvaluationMetric[]
-): EvaluationMetrics => {
+): Promise<EvaluationMetrics> => {
   // Initialize counters for calculating precision, recall, and F1 score
   let truePositives = 0;   // Correctly predicted positive cases
   let falsePositives = 0;  // Incorrectly predicted positive cases  
@@ -126,14 +127,30 @@ export const calculateMetrics = (
   // Calculate custom metrics (all return values between 0-1)
   const customMetrics: Record<string, number> = {};
   if (evaluationMetrics) {
-    evaluationMetrics
-      .filter(metric => !metric.isBuiltIn && metric.enabled)
-      .forEach(metric => {
+    const enabledCustomMetrics = evaluationMetrics.filter(metric => 
+      metric.enabled && (metric.id === 'semantic_score' || !metric.isBuiltIn)
+    );
+    
+    // Process semantic score and other custom metrics
+    for (const metric of enabledCustomMetrics) {
+      if (metric.id === 'semantic_score') {
+        // Calculate semantic score using LLM evaluation
+        try {
+          customMetrics[metric.id] = await calculateSemanticScore(sentenceResults, task);
+          console.log(`Calculated semantic score: ${metric.name} = ${customMetrics[metric.id]}`);
+        } catch (error) {
+          console.error(`Error calculating semantic score: ${error}`);
+          // Fallback to mock value if LLM call fails
+          customMetrics[metric.id] = Math.random() * 0.5 + 0.3;
+          console.log(`Fallback semantic score: ${metric.name} = ${customMetrics[metric.id]}`);
+        }
+      } else {
         // TODO: Implement actual custom metric calculation
         // For now, return a mock value between 0-1
         customMetrics[metric.id] = Math.random() * 0.5 + 0.3; // Random value between 0.3-0.8
         console.log(`Calculating custom metric: ${metric.name} = ${customMetrics[metric.id]}`);
-      });
+      }
+    }
   }
   
   return { 

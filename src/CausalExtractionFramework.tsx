@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Database, FileJson, TrendingUp, Upload, Download } from 'lucide-react';
 import { TaskType, TabType, EvaluationMetric } from './types';
 import { useEvaluation } from './hooks/useEvaluation';
 import { usePrompts } from './hooks/usePrompts';
 import { useDataUpload } from './hooks/useDataUpload';
 import { exportResultsToJSON, exportDatabaseToCSV } from './utils/export';
+import { LLMServiceFactory } from './services/llmService';
 import { SetupTab } from './components/SetupTab';
 import { ProgressTab } from './components/ProgressTab';
 import { ResultsTab } from './components/ResultsTab';
@@ -38,8 +39,45 @@ export default function CausalExtractionFramework() {
       description: 'Harmonic mean of precision and recall',
       enabled: true,
       isBuiltIn: true
+    },
+    {
+      id: 'semantic_score',
+      name: 'Semantic Score',
+      description: 'LLM-based semantic similarity score between predicted and gold labels',
+      enabled: false,
+      isBuiltIn: true
     }
   ]);
+
+  const [apiKeyStatus, setApiKeyStatus] = useState<{
+    anthropic: boolean;
+    openai: boolean;
+    loading: boolean;
+  }>({ anthropic: false, openai: false, loading: true });
+
+  // Check API key status once on application load
+  useEffect(() => {
+    const checkApiKeys = async () => {
+      setApiKeyStatus(prev => ({ ...prev, loading: true }));
+      try {
+        const status = await LLMServiceFactory.validateAllApiKeys();
+        setApiKeyStatus({
+          anthropic: status.anthropic,
+          openai: status.openai,
+          loading: false
+        });
+      } catch (error) {
+        console.error('Failed to validate API keys:', error);
+        setApiKeyStatus({
+          anthropic: false,
+          openai: false,
+          loading: false
+        });
+      }
+    };
+
+    checkApiKeys();
+  }, []);
 
   const { currentRun, runHistory, isRunning, progress, runEvaluation, clearStoredResults } = useEvaluation();
   const { 
@@ -55,7 +93,7 @@ export default function CausalExtractionFramework() {
     updatePrompt,
     resetEditPromptForm
   } = usePrompts();
-  const { uploadedData, handleFileUpload } = useDataUpload();
+  const { uploadedData, handleFileUpload, removeDataset, getStorageInfo, getDatasetMetadata } = useDataUpload();
 
   const handleRunEvaluation = async () => {
     setActiveTab('progress');
@@ -192,6 +230,7 @@ export default function CausalExtractionFramework() {
             setEvaluationMetrics={setEvaluationMetrics}
             outputFormat={outputFormat}
             setOutputFormat={setOutputFormat}
+            apiKeyStatus={apiKeyStatus}
           />
         )}
         {activeTab === 'progress' && (
@@ -208,6 +247,9 @@ export default function CausalExtractionFramework() {
             runHistory={runHistory}
             uploadedData={uploadedData}
             onClearResults={clearStoredResults}
+            onRemoveDataset={removeDataset}
+            getDatasetStorageInfo={getStorageInfo}
+            getDatasetMetadata={getDatasetMetadata}
           />
         )}
       </div>

@@ -42,11 +42,11 @@ export const useEvaluation = () => {
     
     const runId = Date.now().toString();
     const results: EvaluationResult[] = [];
-    const sentences = uploadedData[selectedDataset].sentences;
+    const sentences = uploadedData[selectedDataset].textBlocks;
     
     // Calculate total operations for progress tracking (each sentence needs to be processed for each prompt-model combination)
     const totalOperations = selectedPrompts.length * selectedModels.length * sentences.length;
-    let completedOperations = 0;
+    // let completedOperations = 0;
 
     // Reset progress
     setProgress({
@@ -56,10 +56,12 @@ export const useEvaluation = () => {
     });
     
     try {
+      let promptIndex = 0;
       for (const promptId of selectedPrompts) {
         const prompt = prompts[selectedTask].find(p => p.id === promptId);
         if (!prompt) continue;
         
+        let modelIndex = 0;
         for (const modelId of selectedModels) {
           const modelConfig = modelConfigs.find(m => m.id === modelId);
           if (!modelConfig) continue;
@@ -87,19 +89,23 @@ export const useEvaluation = () => {
               modelConfig,
               finalPromptTemplate,
               prompt.name,
-              (_completedSentences, _totalSentences, currentSentence) => {
-                // Update global progress based on completed sentences across all combinations
-                completedOperations++;
+              (completedSentences, _totalSentences, currentSentence) => {
+                // Calculate global progress based on current position across all combinations
+                const completedCombinations = promptIndex * selectedModels.length + modelIndex;
+                const sentencesInCompletedCombinations = completedCombinations * sentences.length;
+                const currentCombinationProgress = completedSentences;
+                const totalCompleted = sentencesInCompletedCombinations + currentCombinationProgress;
+                
                 setProgress(prev => ({
                   ...prev,
-                  current: completedOperations,
+                  current: totalCompleted,
                   currentSentence: currentSentence ? `Processing: ${currentSentence.substring(0, 50)}...` : undefined
                 }));
               }
             );
 
             const selectedMetricIds = evaluationMetrics.filter(m => m.enabled).map(m => m.id);
-            const metrics = calculateMetrics(sentenceResults, selectedTask, evaluationMetrics);
+            const metrics = await calculateMetrics(sentenceResults, selectedTask, evaluationMetrics);
             
             const result: EvaluationResult = {
               runId,
@@ -149,7 +155,9 @@ export const useEvaluation = () => {
               }]
             }));
           }
+          modelIndex++;
         }
+        promptIndex++;
       }
     } catch (error) {
       console.error('Evaluation failed:', error);

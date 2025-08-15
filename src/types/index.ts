@@ -13,7 +13,7 @@ export interface CausalRelationship {
 }
 
 export interface Dataset {
-  sentences: Sentence[];
+  textBlocks: Sentence[];
 }
 
 export interface Prompt {

@@ -34,20 +34,35 @@ The framework supports two main NLP tasks:
 Datasets must follow this structure:
 ```json
 {
-  "dataset_name": {
-    "sentences": [
-      {
-        "id": "unique_id",
-        "text": "sentence text",
-        "gold_entities": ["entity1", "entity2"],
-        "gold_relationships": [
-          {"cause": "entity1", "effect": "entity2", "location": "optional"}
-        ]
-      }
-    ]
-  }
+  "textBlocks": [
+    {
+      "id": "unique_id",
+      "text": "sentence text",
+      "gold_entities": ["entity1", "entity2"],
+      "gold_relationships": [
+        {"cause": "entity1", "effect": "entity2"}
+      ]
+    }
+  ]
 }
 ```
+
+**Required Fields:**
+- `textBlocks`: Array of text blocks to be analyzed
+- `id`: Unique identifier for each text block (string)
+- `text`: The actual text content for analysis (string)
+- `gold_entities`: Ground truth entities as array of strings
+- `gold_relationships`: Ground truth relationships as array of objects with `cause` and `effect` properties
+
+**Optional Fields:**
+- `location`: Optional location field in relationships
+- `confidence`: Optional confidence score in relationships
+
+**Data Persistence:**
+- **Uploaded datasets**: Stored persistently in browser localStorage and survive page refreshes
+- **Evaluation results**: Also stored persistently across sessions
+- **File format**: Upload `.json` or `.jsonl` files through the "Upload Data" button
+- **Validation**: Comprehensive validation with specific error messages for invalid data structure
 
 ### State Management
 

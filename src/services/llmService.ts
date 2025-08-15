@@ -14,7 +14,7 @@ class AnthropicService implements LLMService {
       id: 'anthropic',
       name: 'Anthropic',
       provider: 'anthropic',
-      modelId: 'claude-3-sonnet-20240229',
+      modelId: 'claude-3-7-sonnet-20250219',
       supportedTasks: ['entity_extraction', 'relationship_extraction']
     });
   }

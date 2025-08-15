@@ -80,11 +80,11 @@ export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
         </div>
 
         <div className="space-y-4">
-          <h4 className="font-medium">Sentence-by-Sentence Results:</h4>
+          <h4 className="font-medium">Textblock-by-Textblock Results:</h4>
           {selectedResult.sentenceResults.map((sentenceResult, idx) => (
             <div key={idx} className="border rounded-lg p-4">
               <div className="mb-3">
-                <span className="text-sm font-medium text-gray-500">Sentence {idx + 1}:</span>
+                <span className="text-sm font-medium text-gray-500">Textblock {idx + 1}:</span>
                 <p className="mt-1">{sentenceResult.text}</p>
               </div>
               

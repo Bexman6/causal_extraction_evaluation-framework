@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Play, Trash2, Edit, Plus, AlertCircle, CheckCircle } from 'lucide-react';
 import { TaskType, Prompt, EvaluationMetric } from '../types';
 import { modelConfigs } from '../constants';
-import { LLMServiceFactory } from '../services/llmService';
 import { AddPromptModal } from './AddPromptModal';
 import { JsonFormatPreviewModal } from './JsonFormatPreviewModal';
 
@@ -32,6 +31,11 @@ interface SetupTabProps {
   setEvaluationMetrics: React.Dispatch<React.SetStateAction<EvaluationMetric[]>>;
   outputFormat: 'json' | 'raw';
   setOutputFormat: (value: 'json' | 'raw') => void;
+  apiKeyStatus: {
+    anthropic: boolean;
+    openai: boolean;
+    loading: boolean;
+  };
 }
 
 export const SetupTab: React.FC<SetupTabProps> = ({
@@ -59,7 +63,8 @@ export const SetupTab: React.FC<SetupTabProps> = ({
   evaluationMetrics,
   setEvaluationMetrics,
   outputFormat,
-  setOutputFormat
+  setOutputFormat,
+  apiKeyStatus
 }) => {
   const [showAddMetric, setShowAddMetric] = useState(false);
   const [selectedMetricSets, setSelectedMetricSets] = useState<string[]>(['standard']);
@@ -69,35 +74,6 @@ export const SetupTab: React.FC<SetupTabProps> = ({
     template: ''
   });
   const [showJsonPreview, setShowJsonPreview] = useState(false);
-  const [apiKeyStatus, setApiKeyStatus] = useState<{
-    anthropic: boolean;
-    openai: boolean;
-    loading: boolean;
-  }>({ anthropic: false, openai: false, loading: true });
-
-  // Check API key status on component mount
-  useEffect(() => {
-    const checkApiKeys = async () => {
-      setApiKeyStatus(prev => ({ ...prev, loading: true }));
-      try {
-        const status = await LLMServiceFactory.validateAllApiKeys();
-        setApiKeyStatus({
-          anthropic: status.anthropic,
-          openai: status.openai,
-          loading: false
-        });
-      } catch (error) {
-        console.error('Failed to validate API keys:', error);
-        setApiKeyStatus({
-          anthropic: false,
-          openai: false,
-          loading: false
-        });
-      }
-    };
-
-    checkApiKeys();
-  }, []);
 
   const getProviderIcon = (provider: 'anthropic' | 'openai') => {
     if (apiKeyStatus.loading) {
@@ -119,6 +95,11 @@ export const SetupTab: React.FC<SetupTabProps> = ({
       name: 'Standard Metrics (Precision, Recall, F1)',
       description: 'Core evaluation metrics for classification tasks',
       metrics: ['precision', 'recall', 'f1']
+    },
+    semantic_score: {
+      name: 'Semantic Score',
+      description: 'LLM-based semantic similarity score between predicted and gold labels',
+      metrics: ['semantic_score']
     },
     ...Object.fromEntries(
       evaluationMetrics
@@ -377,7 +358,7 @@ export const SetupTab: React.FC<SetupTabProps> = ({
         </div>
         <div className="space-y-3">
           {Object.entries(metricSets).map(([setId, setInfo]) => {
-            const isCustomMetric = !['standard', 'precision', 'recall', 'f1'].includes(setId);
+            const isCustomMetric = !['standard', 'semantic_score', 'precision', 'recall', 'f1'].includes(setId);
             return (
               <div key={setId} className="flex items-start space-x-3 p-3 border rounded-lg hover:border-blue-300 cursor-pointer"
                    onClick={() => handleMetricSetToggle(setId)}>
