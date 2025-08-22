@@ -23,6 +23,25 @@ export interface Prompt {
   isCustom: boolean;
 }
 
+export interface MetricsResult {
+  precision: number;
+  recall: number;
+  f1: number;
+  truePositives: number;
+  falsePositives: number;
+  falseNegatives: number;
+  // Optional detailed match categorization (only for semantic matching)
+  exact?: string[];
+  semantic?: string[];
+  partial?: string[];
+  noMatch?: string[];
+}
+
+export interface MetricDisplayValue {
+  metricType: string;
+  values: string[]; // e.g., ['precision'], ['f1'], ['precision', 'recall']
+}
+
 export interface EvaluationMetrics {
   precision: number;
   recall: number;
@@ -30,7 +49,12 @@ export interface EvaluationMetrics {
   truePositives: number;
   falsePositives: number;
   falseNegatives: number;
-  customMetrics?: Record<string, number>;
+  // Specifies which values each metric type wants to display in charts
+  displayedValues: MetricDisplayValue[];
+  // Optional additional metrics for when multiple types are calculated
+  standard?: MetricsResult;
+  semanticMatching?: MetricsResult;
+  // Future metrics can be added here (e.g., fuzzy?, weighted?, etc.)
 }
 
 export interface SentenceResult {
@@ -66,14 +90,12 @@ export interface EvaluationMetric {
   id: string;
   name: string;
   description: string;
-  template?: string;
   enabled: boolean;
-  isBuiltIn: boolean;
 }
 
 export type TabType = 'setup' | 'evaluation' | 'progress' | 'results' | 'database';
 
-export type ModelProvider = 'anthropic' | 'openai';
+export type ModelProvider = 'anthropic' | 'openai' | 'google';
 
 export interface ModelConfig {
   id: string;
@@ -116,4 +138,23 @@ export interface EvaluationProgress {
     prompt: string;
     error: string;
   }>;
+}
+
+export interface ExactMatchResult {
+  exactMatches: Array<{goldIndex: number, predIndex: number}>;
+  unmatchedGold: string[];
+  unmatchedPredictions: string[];
+}
+
+export interface StandardSemanticMetricsResult {
+  precision: number;
+  recall: number;
+  f1: number;
+  TPw: number;  // True positives weighted
+  FPw: number;  // False positives weighted
+  FNw: number;  // False negatives weighted
+  exact: string[];      // Entities with exact matches
+  semantic: string[];   // Entities with semantic matches
+  partial: string[];    // Entities with partial matches
+  noMatch: string[];    // Entities with no matches
 }

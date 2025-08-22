@@ -75,6 +75,35 @@ export const modelConfigs: ModelConfig[] = [
     maxTokens: 4000,
     temperature: 0.0,
     supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+  },
+  
+  // Google Gemini Models
+  {
+    id: 'gemini-2-5-pro',
+    name: 'Gemini 2.5 Pro',
+    provider: 'google',
+    modelId: 'gemini-2.5-pro',
+    maxTokens: 65536,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+  },
+  {
+    id: 'gemini-2-5-flash',
+    name: 'Gemini 2.5 Flash',
+    provider: 'google',
+    modelId: 'gemini-2.5-flash',
+    maxTokens: 65536,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+  },
+  {
+    id: 'gemini-2-5-flash-lite',
+    name: 'Gemini 2.5 Flash Lite',
+    provider: 'google',
+    modelId: 'gemini-2.5-flash-lite',
+    maxTokens: 65536,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
   }
 ];
 
@@ -188,31 +217,61 @@ export const jsonFormatTemplates = {
   }
 };
 
-// Semantic evaluation configuration for entity extraction
-export const SEMANTIC_EVAL_ENTITY_PROMPT = `Compare the semantic similarity between the predicted output and the gold standard output. Rate the similarity on a scale from 0.0 to 1.0, where 1.0 means perfect semantic match and 0.0 means completely different.
+// Standard Semantic Matching prompts for hybrid evaluation
+export const STANDARD_SEMANTIC_ENTITY_PROMPT = `You are an expert evaluator of causal-entity extraction.
+  Given the following inputs:
 
-Predicted: {predicted}
-Gold: {gold}
+  • gold_entities: {gold}  
+  • predicted_entities: {predicted}  
 
-Return only a decimal number between 0.0 and 1.0 representing the semantic similarity score.`;
-      
-// Semantic evaluation configuration for relationship extraction
-export const SEMANTIC_EVAL_RELATIONSHIP_PROMPT = `Compare the semantic similarity between the predicted output and the gold standard output. Rate the similarity on a scale from 0.0 to 1.0, where 1.0 means perfect semantic match and 0.0 means completely different.
+  Your task is to compare predicted_entities against gold_entities and produce an evaluation. 
+  Focus on *semantic* rather than purely lexical overlap.  
+  Treat synonyms, inflections, acronyms, abbreviations, and clear hypernym ↔ hyponym cases as potential matches (e.g., “CO₂ emissions” ≈ “carbon dioxide emissions”; “heart attack” ≈ “myocardial infarction”).  
+  When unsure, rely on domain knowledge and common usage.  
+  Produce an evaluation with these fields:
 
-Predicted: {predicted}
-Gold: {gold}
+  Evaluation procedure (think step-by-step privately, but show only the final JSON):
+  
+  1. **Normalize** entities  
+   • lowercase, trim whitespace, remove punctuation that does not change meaning  
+   • expand common abbreviations (e.g., “GDP” → “gross domestic product”)  
 
-Return only a decimal number between 0.0 and 1.0 representing the semantic similarity score.`;
+  2. **Match classes**  
+    • **semantic_matches** — reasonable synonym / abbreviation / hypernym-hyponym pair  
+    • **partial_matches**  — one list’s entity is a strict substring of the other *and* they denote the same concept  
+    
+  3. **Output format**  
+  Return a single valid **JSON** object with these keys *in the exact order shown*:  
+
+  {
+  "semantic_match_pairs": [
+    { "gold": "<gold entity>", "predicted": "<predicted entity>" }
+  ],
+  "partial_match_pairs": [
+    { "gold": "<gold entity>", "predicted": "<predicted entity>" }
+  ]
+}`;
+
+export const STANDARD_SEMANTIC_RELATIONSHIP_PROMPT = `You are evaluating relationship extraction predictions that did not exactly match the gold standard relationships. Your task is to determine how many of the predicted relationships are semantically equivalent to relationships in the gold standard, even if they don't match exactly.
+
+Non-matching Predicted Relationships: {predicted}  
+Gold Standard Relationships: {gold}
+
+Count how many predicted relationships are semantically equivalent to gold standard relationships (e.g., cause-effect pairs that express the same meaning with different wording).
+
+Return only a single number representing the count of semantic matches. Do not include any explanation.`;
 
 export const SEMANTIC_EVAL_MODEL_CONFIG: ModelConfig = {
-  id: 'claude-3-haiku',
-  name: 'Claude 3 Haiku',
-  provider: 'anthropic',
-  modelId: 'claude-3-haiku-20240307',
-  maxTokens: 1000,
-  temperature: 0.0,
-  supportedTasks: ['entity_extraction', 'relationship_extraction']
-};
+    id: 'gpt-4-turbo',
+    name: 'GPT-4 Turbo',
+    provider: 'openai',
+    modelId: 'gpt-4-turbo-preview',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+  };
+
+
 
 // Legacy support - keeping for backward compatibility
 export const mockModels = modelConfigs.map(config => config.id);

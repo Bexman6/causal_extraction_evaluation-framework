@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   // Clean and validate API keys
   const anthropicApiKey = env.ANTHROPIC_API_KEY?.trim()
   const openaiApiKey = env.OPENAI_API_KEY?.trim()
+  const googleApiKey = env.GOOGLE_API_KEY?.trim()
   
   // Debug logging
   console.log('🔧 Vite Config - Mode:', mode)
@@ -15,6 +16,8 @@ export default defineConfig(({ mode }) => {
   console.log('🔑 Anthropic API Key length:', anthropicApiKey?.length || 0)
   console.log('🔑 OpenAI API Key loaded:', openaiApiKey ? 'YES' : 'NO')
   console.log('🔑 OpenAI API Key length:', openaiApiKey?.length || 0)
+  console.log('🔑 Google API Key loaded:', googleApiKey ? 'YES' : 'NO')
+  console.log('🔑 Google API Key length:', googleApiKey?.length || 0)
   
   return {
     plugins: [react()],
@@ -74,6 +77,39 @@ export default defineConfig(({ mode }) => {
           },
           headers: {
             'Authorization': `Bearer ${openaiApiKey}`,
+            'Content-Type': 'application/json'
+          }
+        },
+        '/api/google': {
+          target: 'https://generativelanguage.googleapis.com',
+          changeOrigin: true,
+          secure: true,
+          rewrite: (path) => path.replace(/^\/api\/google/, ''),
+          configure: (proxy, _options) => {
+            proxy.on('error', (err, _req, _res) => {
+              console.log('🚨 Google proxy error:', err)
+            })
+            proxy.on('proxyReq', (proxyReq, req, _res) => {
+              console.log('📤 Google proxy request:', req.method, req.url)
+              console.log('📤 Headers being sent:', proxyReq.getHeaders())
+            })
+            proxy.on('proxyRes', (proxyRes, req, _res) => {
+              console.log('📥 Google proxy response:', proxyRes.statusCode, req.url)
+              
+              // Log error response bodies for debugging
+              if (proxyRes.statusCode && proxyRes.statusCode >= 400) {
+                let body = ''
+                proxyRes.on('data', (chunk) => {
+                  body += chunk
+                })
+                proxyRes.on('end', () => {
+                  console.log(`🚨 Google ${proxyRes.statusCode} Error Body:`, body)
+                })
+              }
+            })
+          },
+          headers: {
+            'x-goog-api-key': `${googleApiKey}`,
             'Content-Type': 'application/json'
           }
         }

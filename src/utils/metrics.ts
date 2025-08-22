@@ -1,5 +1,5 @@
-import { EvaluationMetrics, SentenceResult, TaskType, EvaluationMetric, CausalRelationship } from '../types';
-import { calculateSemanticScore } from './semanticEvaluation';
+import { EvaluationMetrics, SentenceResult, TaskType, EvaluationMetric, CausalRelationship, MetricsResult, MetricDisplayValue } from '../types';
+import { calculateStandardSemanticMetrics } from './standardSemanticMetrics';
 
 /**
  * Normalizes strings for case-insensitive comparison by converting to lowercase and trimming whitespace
@@ -22,21 +22,88 @@ const areRelationshipsEqual = (rel1: CausalRelationship, rel2: CausalRelationshi
 };
 
 /**
- * Calculates evaluation metrics (precision, recall, F1) for causal extraction tasks
+ * Calculates evaluation metrics based on selected metric types
  * 
- * This function performs case-insensitive evaluation of both entity extraction and 
- * relationship extraction tasks by comparing model predictions against gold standard data.
+ * This function determines which metrics are enabled and uses the appropriate calculation method.
+ * Both standard and semantic matching metrics return the same 6-field structure.
  * 
  * @param sentenceResults - Array of sentence-level prediction results from the model
  * @param task - Type of extraction task ('entity_extraction' or 'relationship_extraction')
- * @param evaluationMetrics - Optional array of custom metrics to calculate
+ * @param evaluationMetrics - Array of metric configurations with enabled/disabled status
  * @returns Promise<Object> containing precision, recall, F1 score, and counts of TP/FP/FN
  */
 export const calculateMetrics = async (
   sentenceResults: SentenceResult[], 
   task: TaskType, 
-  evaluationMetrics?: EvaluationMetric[]
+  evaluationMetrics: EvaluationMetric[]
 ): Promise<EvaluationMetrics> => {
+  // Get all enabled metrics
+  const enabledMetrics = evaluationMetrics.filter(m => m.enabled);
+  
+  console.log(`
+  =====================================================
+  Metrics Calculation for ${task}
+  Enabled metrics: ${enabledMetrics.map(m => m.id).join(', ')}
+  =====================================================`);
+  
+  if (enabledMetrics.length === 0) {
+    console.log('⚠️ No metrics enabled, returning defaults');
+    return getDefaultMetrics();
+  }
+  
+  // Calculate all enabled metrics independently (no prioritization)
+  const calculatedResults: Record<string, MetricsResult> = {};
+  const displayedValues: MetricDisplayValue[] = [];
+  
+  for (const metric of enabledMetrics) {
+
+    console.log(`📊 Calculating ${metric.id} metrics`);
+    
+    if (metric.id === 'standard_semantic_matching') {
+      calculatedResults.semanticMatching = await calculateSemanticMatchingMetrics(sentenceResults, task);
+      // Semantic matching displays F1 by default
+      displayedValues.push({
+        metricType: 'semanticMatching',
+        values: ['f1']
+      });
+    } else if (metric.id === 'standard') {
+      calculatedResults.standard = calculateStandardMetrics(sentenceResults, task);
+      // Standard metrics display F1 by default
+      displayedValues.push({
+        metricType: 'standard',
+        values: ['f1']
+      });
+    } 
+    // Future metric types can be added here with their own display preferences
+  }
+  
+  // Use first calculated result for primary fields (backward compatibility)
+  const primaryResult = Object.values(calculatedResults)[0] || getDefaultMetrics();
+  
+  console.log(`📈 Display values: ${JSON.stringify(displayedValues)}`);
+  
+  // Return combined results with display specifications
+  return {
+    // Primary fields (for backward compatibility)
+    ...primaryResult,
+    // Specifies which values each metric type wants to display
+    displayedValues,
+    // Individual metric results (all calculated independently)
+    standard: calculatedResults.standard,
+    semanticMatching: calculatedResults.semanticMatching
+  };
+};
+
+/**
+ * Calculates standard evaluation metrics using traditional TP/FP/FN exact matching
+ * @param sentenceResults - Array of sentence-level prediction results
+ * @param task - Type of extraction task
+ * @returns MetricsResult object with all 6 standard fields
+ */
+const calculateStandardMetrics = (
+  sentenceResults: SentenceResult[], 
+  task: TaskType
+): MetricsResult => {
   // Initialize counters for calculating precision, recall, and F1 score
   let truePositives = 0;   // Correctly predicted positive cases
   let falsePositives = 0;  // Incorrectly predicted positive cases  
@@ -48,11 +115,9 @@ export const calculateMetrics = async (
     const goldData = result.goldData;
 
     console.log(`
-    -----------------------------------------------------
-    Calculating metrics:
+    Processing sentence: ${result.sentenceId}
     Predictions: ${JSON.stringify(predictions)}
-    Gold Data: ${JSON.stringify(goldData)}
-    -----------------------------------------------------`);
+    Gold Data: ${JSON.stringify(goldData)}`);
 
     if (task === 'entity_extraction') {
       // For entity extraction: compare entity strings (case-insensitive)
@@ -124,34 +189,11 @@ export const calculateMetrics = async (
   // F1 Score: Harmonic mean of precision and recall
   const f1 = 2 * (precision * recall) / (precision + recall) || 0;
   
-  // Calculate custom metrics (all return values between 0-1)
-  const customMetrics: Record<string, number> = {};
-  if (evaluationMetrics) {
-    const enabledCustomMetrics = evaluationMetrics.filter(metric => 
-      metric.enabled && (metric.id === 'semantic_score' || !metric.isBuiltIn)
-    );
-    
-    // Process semantic score and other custom metrics
-    for (const metric of enabledCustomMetrics) {
-      if (metric.id === 'semantic_score') {
-        // Calculate semantic score using LLM evaluation
-        try {
-          customMetrics[metric.id] = await calculateSemanticScore(sentenceResults, task);
-          console.log(`Calculated semantic score: ${metric.name} = ${customMetrics[metric.id]}`);
-        } catch (error) {
-          console.error(`Error calculating semantic score: ${error}`);
-          // Fallback to mock value if LLM call fails
-          customMetrics[metric.id] = Math.random() * 0.5 + 0.3;
-          console.log(`Fallback semantic score: ${metric.name} = ${customMetrics[metric.id]}`);
-        }
-      } else {
-        // TODO: Implement actual custom metric calculation
-        // For now, return a mock value between 0-1
-        customMetrics[metric.id] = Math.random() * 0.5 + 0.3; // Random value between 0.3-0.8
-        console.log(`Calculating custom metric: ${metric.name} = ${customMetrics[metric.id]}`);
-      }
-    }
-  }
+  console.log(`📊 Standard Metrics Results:
+    - Precision: ${precision.toFixed(4)}
+    - Recall: ${recall.toFixed(4)}
+    - F1: ${f1.toFixed(4)}
+    - TP: ${truePositives}, FP: ${falsePositives}, FN: ${falseNegatives}`);
   
   return { 
     precision, 
@@ -159,7 +201,56 @@ export const calculateMetrics = async (
     f1, 
     truePositives, 
     falsePositives, 
-    falseNegatives,
-    customMetrics: Object.keys(customMetrics).length > 0 ? customMetrics : undefined
+    falseNegatives
+  };
+};
+
+/**
+ * Wrapper function for semantic matching metrics calculation
+ * @param sentenceResults - Array of sentence-level prediction results
+ * @param task - Type of extraction task  
+ * @returns MetricsResult object with standard metrics plus detailed match categorization arrays
+ */
+const calculateSemanticMatchingMetrics = async (
+  sentenceResults: SentenceResult[], 
+  task: TaskType
+): Promise<MetricsResult> => {
+  try {
+    // Call the weighted bipartite matching calculation
+    const result = await calculateStandardSemanticMetrics(sentenceResults, task);
+    
+    // Extract metrics from the detailed result including match categorization
+    return {
+      precision: result.precision,
+      recall: result.recall,
+      f1: result.f1,
+      truePositives: result.TPw,
+      falsePositives: result.FPw,
+      falseNegatives: result.FNw,
+      exact: result.exact,
+      semantic: result.semantic,
+      partial: result.partial,
+      noMatch: result.noMatch
+    };
+  } catch (error) {
+    console.error(`Error in semantic matching calculation: ${error}`);
+    // Fallback to standard metrics if semantic matching fails
+    return calculateStandardMetrics(sentenceResults, task);
+  }
+};
+
+/**
+ * Returns default/zero metrics when no metrics are enabled
+ * @returns EvaluationMetrics object with zero values
+ */
+const getDefaultMetrics = (): EvaluationMetrics => {
+  return {
+    precision: 0,
+    recall: 0,
+    f1: 0,
+    truePositives: 0,
+    falsePositives: 0,
+    falseNegatives: 0,
+    displayedValues: []
   };
 };

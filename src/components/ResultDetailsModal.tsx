@@ -1,5 +1,5 @@
 import React from 'react';
-import { EvaluationResult } from '../types';
+import { EvaluationResult, MetricsResult } from '../types';
 
 interface ResultDetailsModalProps {
   selectedResult: EvaluationResult;
@@ -13,6 +13,36 @@ const normalizeString = (str: string): string => {
 
 const includesCaseInsensitive = (array: string[], searchValue: string): boolean => {
   return array.some(item => normalizeString(item) === normalizeString(searchValue));
+};
+
+// Enhanced entity classification using semantic matching data
+type EntityMatchType = 'exact' | 'semantic' | 'partial' | 'nomatch';
+
+const getEntityMatchType = (
+  entity: string, 
+  semanticMatching: MetricsResult | undefined,
+  goldData: string[]
+): EntityMatchType => {
+  if (!semanticMatching) {
+    // Fallback to old exact matching logic when semantic data unavailable
+    return includesCaseInsensitive(goldData, entity) ? 'exact' : 'nomatch';
+  }
+  
+  // Check semantic matching categorization arrays
+  if (semanticMatching.exact?.includes(entity)) return 'exact';
+  if (semanticMatching.semantic?.includes(entity)) return 'semantic';
+  if (semanticMatching.partial?.includes(entity)) return 'partial';
+  return 'nomatch';
+};
+
+// Color mapping for different match types
+const getEntityColorClasses = (matchType: EntityMatchType): string => {
+  switch (matchType) {
+    case 'exact': return 'bg-green-100 text-green-800';      // Green: Perfect match
+    case 'semantic': return 'bg-blue-100 text-blue-800';     // Blue: Semantic match  
+    case 'partial': return 'bg-yellow-100 text-yellow-800';  // Yellow: Partial match
+    case 'nomatch': return 'bg-red-100 text-red-800';        // Red: No match
+  }
 };
 
 export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
@@ -79,6 +109,47 @@ export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
           </div>
         </div>
 
+        {/* Show detailed breakdown if both metric types were calculated */}
+        {selectedResult.metrics.standard && selectedResult.metrics.semanticMatching && (
+          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-gray-50 rounded">
+              <h4 className="font-medium mb-2 text-gray-700">Standard Metrics (Exact Matching):</h4>
+              <div className="space-y-1 text-sm">
+                <div>
+                  <span className="text-gray-600">Precision:</span>
+                  <span className="ml-2 font-medium">{selectedResult.metrics.standard.precision.toFixed(3)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Recall:</span>
+                  <span className="ml-2 font-medium">{selectedResult.metrics.standard.recall.toFixed(3)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">F1 Score:</span>
+                  <span className="ml-2 font-medium">{selectedResult.metrics.standard.f1.toFixed(3)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-green-50 rounded">
+              <h4 className="font-medium mb-2 text-green-700">Semantic Matching Metrics:</h4>
+              <div className="space-y-1 text-sm">
+                <div>
+                  <span className="text-gray-600">Precision:</span>
+                  <span className="ml-2 font-medium">{selectedResult.metrics.semanticMatching.precision.toFixed(3)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Recall:</span>
+                  <span className="ml-2 font-medium">{selectedResult.metrics.semanticMatching.recall.toFixed(3)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">F1 Score:</span>
+                  <span className="ml-2 font-medium">{selectedResult.metrics.semanticMatching.f1.toFixed(3)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-4">
           <h4 className="font-medium">Textblock-by-Textblock Results:</h4>
           {selectedResult.sentenceResults.map((sentenceResult, idx) => (
@@ -114,21 +185,50 @@ export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                 
                 <div>
                   <h5 className="text-sm font-medium text-blue-700 mb-2">Model Predictions:</h5>
+                  
+                  {/* Color coding legend for semantic matching */}
+                  {selectedResult.metrics.semanticMatching && selectedResult.task === 'entity_extraction' && (
+                    <div className="mb-2 text-xs text-gray-600 flex gap-3 flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-green-100 rounded border border-green-200"></div>
+                        Exact
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-blue-100 rounded border border-blue-200"></div>  
+                        Semantic
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-yellow-100 rounded border border-yellow-200"></div>
+                        Partial
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-red-100 rounded border border-red-200"></div>
+                        No Match
+                      </span>
+                    </div>
+                  )}
+                  
                   <div className="text-sm space-y-1">
                     {selectedResult.task === 'entity_extraction' ? (
                       <div className="flex flex-wrap gap-1">
-                        {sentenceResult.predictions.map((entity, i) => (
-                          <span 
-                            key={i} 
-                            className={`px-2 py-1 rounded ${
-                              includesCaseInsensitive(sentenceResult.goldData, entity) 
-                                ? 'bg-blue-100 text-blue-800' 
-                                : 'bg-red-100 text-red-800'
-                            }`}
-                          >
-                            {entity}
-                          </span>
-                        ))}
+                        {sentenceResult.predictions.map((entity, i) => {
+                          const matchType = getEntityMatchType(
+                            entity, 
+                            selectedResult.metrics.semanticMatching,
+                            sentenceResult.goldData
+                          );
+                          const colorClasses = getEntityColorClasses(matchType);
+                          
+                          return (
+                            <span 
+                              key={i} 
+                              className={`px-2 py-1 rounded ${colorClasses}`}
+                              title={`Match type: ${matchType}`}
+                            >
+                              {entity}
+                            </span>
+                          );
+                        })}
                       </div>
                     ) : (
                       sentenceResult.predictions.map((rel, i) => (

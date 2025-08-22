@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Trash2, Edit, Plus, AlertCircle, CheckCircle } from 'lucide-react';
+import { Play, Trash2, Edit, AlertCircle, CheckCircle } from 'lucide-react';
 import { TaskType, Prompt, EvaluationMetric } from '../types';
 import { modelConfigs } from '../constants';
 import { AddPromptModal } from './AddPromptModal';
@@ -34,6 +34,7 @@ interface SetupTabProps {
   apiKeyStatus: {
     anthropic: boolean;
     openai: boolean;
+    google: boolean;
     loading: boolean;
   };
 }
@@ -60,22 +61,15 @@ export const SetupTab: React.FC<SetupTabProps> = ({
   showEditPrompt = false,
   onUpdatePrompt,
   onResetEditPromptForm,
-  evaluationMetrics,
   setEvaluationMetrics,
   outputFormat,
   setOutputFormat,
   apiKeyStatus
 }) => {
-  const [showAddMetric, setShowAddMetric] = useState(false);
-  const [selectedMetricSets, setSelectedMetricSets] = useState<string[]>(['standard']);
-  const [newMetric, setNewMetric] = useState({
-    name: '',
-    description: '',
-    template: ''
-  });
+  const [selectedMetricSets, setSelectedMetricSets] = useState<string[]>(['standard_semantic_matching']);
   const [showJsonPreview, setShowJsonPreview] = useState(false);
 
-  const getProviderIcon = (provider: 'anthropic' | 'openai') => {
+  const getProviderIcon = (provider: 'anthropic' | 'openai' | 'google') => {
     if (apiKeyStatus.loading) {
       return <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>;
     }
@@ -86,100 +80,49 @@ export const SetupTab: React.FC<SetupTabProps> = ({
       <AlertCircle className="w-4 h-4 text-red-600" />;
   };
 
-  const getModelsByProvider = (provider: 'anthropic' | 'openai') => {
+  const getModelsByProvider = (provider: 'anthropic' | 'openai' | 'google') => {
     return modelConfigs.filter(model => model.provider === provider);
   };
 
-  const metricSets: Record<string, { name: string; description: string; metrics: string[]; template?: string }> = {
+  const metricSets: Record<string, { name: string; description: string; metrics: string[] }> = {
+    standard_semantic_matching: {
+      name: 'Standard Metrics with semantic matching and score',
+      description: 'Evaluation metrics using weighted bipartite matching with semantic evaluation',
+      metrics: ['standard_semantic_matching']
+    },
     standard: {
       name: 'Standard Metrics (Precision, Recall, F1)',
-      description: 'Core evaluation metrics for classification tasks',
-      metrics: ['precision', 'recall', 'f1']
-    },
-    semantic_score: {
-      name: 'Semantic Score',
-      description: 'LLM-based semantic similarity score between predicted and gold labels',
-      metrics: ['semantic_score']
-    },
-    ...Object.fromEntries(
-      evaluationMetrics
-        .filter(m => !m.isBuiltIn)
-        .map(metric => [
-          metric.id,
-          {
-            name: metric.name,
-            description: metric.description,
-            metrics: [metric.id],
-            template: metric.template
-          }
-        ])
-    )
-  };
-
-  const handleMetricSetToggle = (setId: string) => {
-    // TODO: Update backend with selected metric sets
-    console.log('Toggled metric set:', setId);
-    
-    setSelectedMetricSets(prev => {
-      const newSets = prev.includes(setId)
-        ? prev.filter(id => id !== setId)
-        : [...prev, setId];
-      
-      // Update evaluation metrics based on selection
-      const enabledMetrics = new Set<string>();
-      newSets.forEach(selectedSetId => {
-        metricSets[selectedSetId]?.metrics.forEach(metricId => {
-          enabledMetrics.add(metricId);
-        });
-      });
-      
-      setEvaluationMetrics(prevMetrics => 
-        prevMetrics.map(metric => ({
-          ...metric,
-          enabled: enabledMetrics.has(metric.id)
-        }))
-      );
-      
-      return newSets;
-    });
-  };
-
-  const handleDeleteMetric = (metricId: string) => {
-    // TODO: Implement metric deletion functionality
-    console.log('Delete metric:', metricId);
-    setEvaluationMetrics(prev => 
-      prev.filter(metric => metric.id !== metricId)
-    );
-  };
-
-  const handleAddMetric = () => {
-    // TODO: Implement metric addition functionality
-    console.log('Add metric:', newMetric);
-    if (newMetric.name && newMetric.description) {
-      const metricId = `custom_${Date.now()}`;
-      const metric: EvaluationMetric = {
-        id: metricId,
-        name: newMetric.name,
-        description: newMetric.description,
-        template: newMetric.template || undefined,
-        enabled: true,
-        isBuiltIn: false
-      };
-      setEvaluationMetrics(prev => [...prev, metric]);
-      
-      // Add the new custom metric to selected sets
-      setSelectedMetricSets(prev => [...prev, metricId]);
-      
-      setNewMetric({ name: '', description: '', template: '' });
-      setShowAddMetric(false);
+      description: 'Traditional evaluation metrics using exact matching',
+      metrics: ['standard']
     }
   };
 
-  const handleCancelAddMetric = () => {
-    // TODO: Implement cancel functionality
-    setNewMetric({ name: '', description: '', template: '' });
-    setShowAddMetric(false);
+  const handleMetricSetToggle = (setId: string) => {
+    console.log('Toggled metric set:', setId);
+    
+    // 1. Calculate new metric sets
+    const newSets = selectedMetricSets.includes(setId)
+      ? selectedMetricSets.filter(id => id !== setId)
+      : [...selectedMetricSets, setId];
+    
+    // 2. Calculate enabled metrics from new sets
+    const enabledMetrics = new Set<string>();
+    newSets.forEach(selectedSetId => {
+      metricSets[selectedSetId]?.metrics.forEach(metricId => {
+        enabledMetrics.add(metricId);
+      });
+    });
+    
+    // 3. Update states sequentially (not nested)
+    setSelectedMetricSets(newSets);
+    setEvaluationMetrics(prevMetrics => 
+      prevMetrics.map(metric => ({
+        ...metric,
+        enabled: enabledMetrics.has(metric.id)
+      }))
+    );
   };
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
@@ -346,19 +289,11 @@ export const SetupTab: React.FC<SetupTabProps> = ({
       />
 
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex justify-between items-center mb-4">
+        <div className="mb-4">
           <h3 className="text-lg font-semibold">Evaluation Metrics</h3>
-          <button
-            onClick={() => setShowAddMetric(true)}
-            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm flex items-center"
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Add Custom Metric
-          </button>
         </div>
         <div className="space-y-3">
           {Object.entries(metricSets).map(([setId, setInfo]) => {
-            const isCustomMetric = !['standard', 'semantic_score', 'precision', 'recall', 'f1'].includes(setId);
             return (
               <div key={setId} className="flex items-start space-x-3 p-3 border rounded-lg hover:border-blue-300 cursor-pointer"
                    onClick={() => handleMetricSetToggle(setId)}>
@@ -371,25 +306,10 @@ export const SetupTab: React.FC<SetupTabProps> = ({
                 <div className="flex-1">
                   <div className="font-medium">
                     {setInfo.name}
-                    {isCustomMetric && <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Custom</span>}
-                    {!isCustomMetric && <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Built-in</span>}
+                    <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Built-in</span>
                   </div>
                   <div className="text-sm text-gray-600 mt-1">{setInfo.description}</div>
-                  {setInfo.template && (
-                    <div className="text-xs text-gray-500 font-mono mt-2 p-2 bg-gray-50 rounded">{setInfo.template}</div>
-                  )}
                 </div>
-                {isCustomMetric && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteMetric(setId);
-                    }}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
               </div>
             );
           })}
@@ -406,65 +326,9 @@ export const SetupTab: React.FC<SetupTabProps> = ({
             </div>
           </div>
         )}
+
       </div>
 
-      {showAddMetric && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Add Custom Metric</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Metric Name
-              </label>
-              <input
-                type="text"
-                value={newMetric.name}
-                onChange={(e) => setNewMetric(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter metric name"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                value={newMetric.description}
-                onChange={(e) => setNewMetric(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={3}
-                placeholder="Describe what this metric measures"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Template (Optional)
-              </label>
-              <textarea
-                value={newMetric.template}
-                onChange={(e) => setNewMetric(prev => ({ ...prev, template: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                rows={4}
-                placeholder="Enter calculation template or formula"
-              />
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={handleAddMetric}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Add Metric
-              </button>
-              <button
-                onClick={handleCancelAddMetric}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-4">
@@ -482,10 +346,16 @@ export const SetupTab: React.FC<SetupTabProps> = ({
                 OpenAI
               </span>
             </div>
+            <div className="flex items-center space-x-1">
+              {getProviderIcon('google')}
+              <span className={`${apiKeyStatus.google ? 'text-green-600' : 'text-red-600'}`}>
+                Google
+              </span>
+            </div>
           </div>
         </div>
 
-        {!apiKeyStatus.anthropic && !apiKeyStatus.openai && !apiKeyStatus.loading && (
+        {!apiKeyStatus.anthropic && !apiKeyStatus.openai && !apiKeyStatus.google && !apiKeyStatus.loading && (
           <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
             <div className="flex items-start space-x-2">
               <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
@@ -495,8 +365,9 @@ export const SetupTab: React.FC<SetupTabProps> = ({
                   Please add your API keys to the <code className="bg-yellow-100 px-1 rounded">.env.local</code> file:
                 </p>
                 <div className="mt-2 font-mono text-xs bg-yellow-100 p-2 rounded">
-                  VITE_ANTHROPIC_API_KEY=your_key_here<br />
-                  VITE_OPENAI_API_KEY=your_key_here
+                  ANTHROPIC_API_KEY=your_key_here<br />
+                  OPENAI_API_KEY=your_key_here<br />
+                  GOOGLE_API_KEY=your_key_here
                 </div>
               </div>
             </div>
@@ -504,14 +375,14 @@ export const SetupTab: React.FC<SetupTabProps> = ({
         )}
 
         <div className="space-y-4">
-          {['anthropic', 'openai'].map(provider => {
-            const providerModels = getModelsByProvider(provider as 'anthropic' | 'openai');
-            const providerValid = apiKeyStatus[provider as 'anthropic' | 'openai'];
+          {['anthropic', 'openai', 'google'].map(provider => {
+            const providerModels = getModelsByProvider(provider as 'anthropic' | 'openai' | 'google');
+            const providerValid = apiKeyStatus[provider as 'anthropic' | 'openai' | 'google'];
             
             return (
               <div key={provider} className="border rounded-lg p-4">
                 <div className="flex items-center space-x-2 mb-3">
-                  {getProviderIcon(provider as 'anthropic' | 'openai')}
+                  {getProviderIcon(provider as 'anthropic' | 'openai' | 'google')}
                   <h4 className="font-medium capitalize">{provider}</h4>
                   {!providerValid && !apiKeyStatus.loading && (
                     <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">API Key Required</span>

@@ -2,32 +2,6 @@ import { TaskType, Sentence, SentenceResult, ModelConfig, APIResponse, LLMReques
 import { LLMServiceFactory, substitutePromptVariables, retryWithBackoff } from '../services/llmService';
 import { parseResponse, validateParsedResponse } from './responseParser';
 
-// To be removed
-export const generateMockPredictions = (sentence: Sentence, task: TaskType): any[] => {
-  if (task === 'entity_extraction') {
-    const allEntities = ["heavy rain", "flooding", "city", "weather", "damage", "smoking", "risk", "lung cancer", "health"];
-    return sentence.gold_entities.filter(() => Math.random() > 0.1)
-      .concat(allEntities.filter(() => Math.random() > 0.8).slice(0, 2));
-  } else {
-    return sentence.gold_relationships.map(rel => ({
-      ...rel,
-      confidence: Math.random()
-    })).filter(() => Math.random() > 0.2);
-  }
-};
-
-// To be removed
-export const processEvaluationData = (
-  sentences: Sentence[], 
-  task: TaskType
-): SentenceResult[] => {
-  return sentences.map(sentence => ({
-    sentenceId: sentence.id,
-    text: sentence.text,
-    predictions: generateMockPredictions(sentence, task),
-    goldData: task === 'entity_extraction' ? sentence.gold_entities : sentence.gold_relationships
-  }));
-};
 
 export const processEvaluationWithLLM = async (
   sentences: Sentence[],

@@ -40,14 +40,38 @@ export const useEvaluation = () => {
   ) => {
     setIsRunning(true);
     
+    // Validate that selected dataset exists
+    if (!selectedDataset) {
+      const error = 'No dataset selected. Please select a dataset before running evaluation.';
+      console.error(error);
+      alert(error);
+      setIsRunning(false);
+      return;
+    }
+    
+    if (!uploadedData[selectedDataset]) {
+      const error = `Dataset "${selectedDataset}" not found. Available datasets: ${Object.keys(uploadedData).join(', ')}`;
+      console.error(error);
+      alert(error);
+      setIsRunning(false);
+      return;
+    }
+    
+    if (!uploadedData[selectedDataset].textBlocks || !Array.isArray(uploadedData[selectedDataset].textBlocks)) {
+      const error = `Dataset "${selectedDataset}" is invalid or has no textBlocks. Please check the dataset structure.`;
+      console.error(error);
+      alert(error);
+      setIsRunning(false);
+      return;
+    }
+    
     const runId = Date.now().toString();
     const results: EvaluationResult[] = [];
     const sentences = uploadedData[selectedDataset].textBlocks;
     
     // Calculate total operations for progress tracking (each sentence needs to be processed for each prompt-model combination)
     const totalOperations = selectedPrompts.length * selectedModels.length * sentences.length;
-    // let completedOperations = 0;
-
+   
     // Reset progress
     setProgress({
       current: 0,

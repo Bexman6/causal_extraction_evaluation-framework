@@ -36,7 +36,29 @@ class OpenAIService implements LLMService {
       id: 'openai',
       name: 'OpenAI',
       provider: 'openai',
-      modelId: 'gpt-4',
+      modelId: 'gpt-3.5-turbo',
+      supportedTasks: ['entity_extraction', 'relationship_extraction']
+    });
+  }
+
+  async callModel(request: LLMRequest): Promise<APIResponse> {
+    return this.proxyService.callModel(request);
+  }
+
+  async validateApiKeys(): Promise<boolean> {
+    return this.proxyService.validateApiKeys();
+  }
+}
+
+class GoogleService implements LLMService {
+  private proxyService: ProxyLLMService;
+
+  constructor() {
+    this.proxyService = ProxyLLMServiceFactory.getService({
+      id: 'google',
+      name: 'Google',
+      provider: 'google',
+      modelId: 'gemini-2.5-flash-lite',
       supportedTasks: ['entity_extraction', 'relationship_extraction']
     });
   }
@@ -53,6 +75,7 @@ class OpenAIService implements LLMService {
 export class LLMServiceFactory {
   private static anthropicService = new AnthropicService();
   private static openaiService = new OpenAIService();
+  private static googleService = new GoogleService();
 
   static getService(model: ModelConfig): LLMService {
     switch (model.provider) {
@@ -60,12 +83,14 @@ export class LLMServiceFactory {
         return this.anthropicService;
       case 'openai':
         return this.openaiService;
+      case 'google':
+        return this.googleService;
       default:
         throw new Error(`Unsupported model provider: ${model.provider}`);
     }
   }
 
-  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean }> {
+  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean; google: boolean }> {
     return ProxyLLMServiceFactory.validateAllApiKeys();
   }
 }

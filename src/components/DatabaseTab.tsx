@@ -122,15 +122,6 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
     metrics.add('recall');
     metrics.add('f1');
     
-    // Add custom metrics from all runs
-    runHistory.forEach(result => {
-      if (result.metrics.customMetrics) {
-        Object.keys(result.metrics.customMetrics).forEach(metric => {
-          metrics.add(metric);
-        });
-      }
-    });
-    
     return Array.from(metrics);
   }, [runHistory]);
 
@@ -536,11 +527,9 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
                   {Array.from(visibleMetrics).map(metric => {
                     let value: number | undefined;
                     
-                    // Get value from built-in metrics or custom metrics
+                    // Get value from built-in metrics only
                     if (['precision', 'recall', 'f1'].includes(metric)) {
                       value = result.metrics[metric as keyof typeof result.metrics] as number;
-                    } else if (result.metrics.customMetrics && result.metrics.customMetrics[metric]) {
-                      value = result.metrics.customMetrics[metric];
                     }
                     
                     return (

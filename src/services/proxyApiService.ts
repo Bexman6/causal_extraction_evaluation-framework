@@ -79,6 +79,87 @@ class ProxyAnthropicService implements ProxyLLMService {
   }
 }
 
+class ProxyGoogleService implements ProxyLLMService {
+  async callModel(request: LLMRequest): Promise<APIResponse> {
+    const startTime = Date.now();
+    
+    try {
+      const response = await fetch(`/api/google/v1beta/models/${request.model.modelId}:generateContent`, {
+        method: 'POST',
+        // Let the proxy handle all headers including Content-Type and authentication
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  text: request.prompt
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: request.temperature ?? 0.0,
+            maxOutputTokens: request.maxTokens ?? 1000,
+            topP: 1.0,
+            topK: 32
+          }
+        })
+      });
+
+      const data = await response.json();
+      const latency = Date.now() - startTime;
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.error?.message || `HTTP ${response.status}: ${response.statusText}`,
+          latency
+        };
+      }
+
+      return {
+        success: true,
+        content: data.candidates?.[0]?.content?.parts?.[0]?.text || '',
+        latency,
+        tokens: {
+          input: data.usageMetadata?.promptTokenCount || 0,
+          output: data.usageMetadata?.candidatesTokenCount || 0,
+          total: data.usageMetadata?.totalTokenCount || 0
+        }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error occurred',
+        latency: Date.now() - startTime
+      };
+    }
+  }
+
+  async validateApiKeys(): Promise<boolean> {
+    try {
+      const testRequest: LLMRequest = {
+        prompt: 'Test',
+        model: {
+          id: 'gemini-2.5-flash-lite',
+          name: 'Gemini 2.5 Flash Lite',
+          provider: 'google',
+          modelId: 'gemini-2.5-flash-lite',
+          supportedTasks: ['entity_extraction', 'relationship_extraction']
+        },
+        temperature: 0.1,
+        maxTokens: 10
+      };
+
+      const result = await this.callModel(testRequest);
+      return result.success;
+    } catch {
+      return false;
+    }
+  }
+}
+
 class ProxyOpenAIService implements ProxyLLMService {
   async callModel(request: LLMRequest): Promise<APIResponse> {
     const startTime = Date.now();
@@ -156,6 +237,7 @@ class ProxyOpenAIService implements ProxyLLMService {
 export class ProxyLLMServiceFactory {
   private static anthropicService = new ProxyAnthropicService();
   private static openaiService = new ProxyOpenAIService();
+  private static googleService = new ProxyGoogleService();
 
   static getService(model: ModelConfig): ProxyLLMService {
     switch (model.provider) {
@@ -163,26 +245,31 @@ export class ProxyLLMServiceFactory {
         return this.anthropicService;
       case 'openai':
         return this.openaiService;
+      case 'google':
+        return this.googleService;
       default:
         throw new Error(`Unsupported model provider: ${model.provider}`);
     }
   }
 
-  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean }> {
+  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean; google: boolean }> {
     try {
-      const [anthropicValid, openaiValid] = await Promise.all([
+      const [anthropicValid, openaiValid, googleValid] = await Promise.all([
         this.anthropicService.validateApiKeys(),
-        this.openaiService.validateApiKeys()
+        this.openaiService.validateApiKeys(),
+        this.googleService.validateApiKeys()
       ]);
 
       return {
         anthropic: anthropicValid,
-        openai: openaiValid
+        openai: openaiValid,
+        google: googleValid
       };
     } catch {
       return {
         anthropic: false,
-        openai: false
+        openai: false,
+        google: false
       };
     }
   }

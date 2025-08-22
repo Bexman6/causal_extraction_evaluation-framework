@@ -25,16 +25,18 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
       name: `${r.promptName}-${r.model}`
     };
     
-    // Add built-in metrics if selected
-    if (allSelectedMetrics.has('precision')) data.precision = r.metrics.precision;
-    if (allSelectedMetrics.has('recall')) data.recall = r.metrics.recall;
-    if (allSelectedMetrics.has('f1')) data.f1 = r.metrics.f1;
-    
-    // Add custom metrics if selected
-    if (r.metrics.customMetrics) {
-      Object.entries(r.metrics.customMetrics).forEach(([metricId, value]) => {
-        if (allSelectedMetrics.has(metricId)) {
-          data[metricId] = value;
+    // Automatically read displayedValues to know which values to display
+    if (r.metrics.displayedValues) {
+      r.metrics.displayedValues.forEach(({ metricType, values }) => {
+        const metricsSource = metricType === 'standard' ? r.metrics.standard : 
+                             metricType === 'semanticMatching' ? r.metrics.semanticMatching : 
+                             null;
+        
+        if (metricsSource) {
+          values.forEach(valueName => {
+            const displayKey = `${valueName}_${metricType}`;
+            data[displayKey] = metricsSource[valueName as keyof typeof metricsSource];
+          });
         }
       });
     }
@@ -42,16 +44,27 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
     return data;
   });
   
+  // Get all unique displayed values across all results
+  const allDisplayedValues = new Set<string>();
+  currentRun.results.forEach(r => {
+    if (r.metrics.displayedValues) {
+      r.metrics.displayedValues.forEach(({ metricType, values }) => {
+        values.forEach(valueName => {
+          allDisplayedValues.add(`${valueName}_${metricType}`);
+        });
+      });
+    }
+  });
+
   const metricColors: Record<string, string> = {
-    precision: '#3B82F6',
-    recall: '#10B981',
-    f1: '#F59E0B',
-    // Generate colors for custom metrics
-    ...Object.fromEntries(
-      Array.from(allSelectedMetrics)
-        .filter(m => !['precision', 'recall', 'f1'].includes(m))
-        .map((metric, idx) => [metric, `hsl(${(idx * 137.5) % 360}, 70%, 50%)`])
-    )
+    // Standard metrics colors  
+    'f1_standard': '#F59E0B',
+    'precision_standard': '#3B82F6',
+    'recall_standard': '#10B981',
+    // Semantic matching colors
+    'precision_semanticMatching': '#06B6D4',
+    'recall_semanticMatching': '#10B981', 
+    'f1_semanticMatching': '#F59E0B'
   };
 
   return (
@@ -69,14 +82,19 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
                 formatter={(value: number, name: string) => [value.toFixed(3), name]}                
               />
               <Legend />
-              {Array.from(allSelectedMetrics).map(metric => (
-                <Bar 
-                  key={metric} 
-                  dataKey={metric} 
-                  fill={metricColors[metric]} 
-                  name={metric.charAt(0).toUpperCase() + metric.slice(1)}
-                />
-              ))}
+              {Array.from(allDisplayedValues).map(displayKey => {
+                const [valueName, metricType] = displayKey.split('_');
+                const displayName = `${valueName.charAt(0).toUpperCase() + valueName.slice(1)} (${metricType === 'semanticMatching' ? 'Semantic' : 'Standard'})`;
+                
+                return (
+                  <Bar 
+                    key={displayKey} 
+                    dataKey={displayKey} 
+                    fill={metricColors[displayKey]} 
+                    name={displayName}
+                  />
+                );
+              })}
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -90,11 +108,16 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
               <tr>
                 <th className="px-6 py-3 text-left text-xs sm:text-xs md:text-sm lg:text-base font-medium text-gray-500 uppercase tracking-wider">Model</th>
                 <th className="px-6 py-3 text-left text-xs sm:text-xs md:text-sm lg:text-base font-medium text-gray-500 uppercase tracking-wider">Prompt</th>
-                {Array.from(allSelectedMetrics).map(metric => (
-                  <th key={metric} className="px-6 py-3 text-left text-xs sm:text-xs md:text-sm lg:text-base font-medium text-gray-500 uppercase tracking-wider">
-                    {metric.charAt(0).toUpperCase() + metric.slice(1)}
-                  </th>
-                ))}
+                {Array.from(allDisplayedValues).map(displayKey => {
+                  const [valueName, metricType] = displayKey.split('_');
+                  const displayName = `${valueName.charAt(0).toUpperCase() + valueName.slice(1)} (${metricType === 'semanticMatching' ? 'Sem' : 'Std'})`;
+                  
+                  return (
+                    <th key={displayKey} className="px-6 py-3 text-left text-xs sm:text-xs md:text-sm lg:text-base font-medium text-gray-500 uppercase tracking-wider">
+                      {displayName}
+                    </th>
+                  );
+                })}
                 <th className="px-6 py-3 text-left text-xs sm:text-xs md:text-sm lg:text-base font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -103,15 +126,20 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
                 <tr key={idx}>
                   <td className="px-6 py-4 whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg font-medium text-gray-900">{result.model}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg text-gray-500">{result.promptName}</td>
-                  {Array.from(allSelectedMetrics).map(metric => {
+                  {Array.from(allDisplayedValues).map(displayKey => {
+                    const [valueName, metricType] = displayKey.split('_');
                     let value: number | undefined;
-                    if (['precision', 'recall', 'f1'].includes(metric)) {
-                      value = result.metrics[metric as keyof typeof result.metrics] as number;
-                    } else if (result.metrics.customMetrics) {
-                      value = result.metrics.customMetrics[metric];
+                    
+                    const metricsSource = metricType === 'standard' ? result.metrics.standard : 
+                                         metricType === 'semanticMatching' ? result.metrics.semanticMatching : 
+                                         null;
+                    
+                    if (metricsSource && ['precision', 'recall', 'f1'].includes(valueName)) {
+                      value = metricsSource[valueName as keyof typeof metricsSource] as number;
                     }
+                    
                     return (
-                      <td key={metric} className="px-6 py-4 whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg text-gray-500">
+                      <td key={displayKey} className="px-6 py-4 whitespace-nowrap text-xs sm:text-sm md:text-base lg:text-lg text-gray-500">
                         {value !== undefined ? value.toFixed(3) : 'N/A'}
                       </td>
                     );

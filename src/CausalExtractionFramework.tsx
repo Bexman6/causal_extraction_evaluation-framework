@@ -16,44 +16,29 @@ export default function CausalExtractionFramework() {
   const [selectedTask, setSelectedTask] = useState<TaskType>('entity_extraction');
   const [selectedPrompts, setSelectedPrompts] = useState<string[]>([]);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
-  const [selectedDataset, setSelectedDataset] = useState('dataset1');
+  const [selectedDataset, setSelectedDataset] = useState('');
   const [outputFormat, setOutputFormat] = useState<'json' | 'raw'>('json');
   const [evaluationMetrics, setEvaluationMetrics] = useState<EvaluationMetric[]>([
     {
-      id: 'precision',
-      name: 'Precision',
-      description: 'Measures the accuracy of positive predictions',
-      enabled: true,
-      isBuiltIn: true
+      id: 'standard',
+      name: 'Standard Metrics (Precision, Recall, F1)',
+      description: 'Traditional evaluation metrics using exact matching',
+      enabled: false
     },
     {
-      id: 'recall',
-      name: 'Recall',
-      description: 'Measures the coverage of actual positive cases',
-      enabled: true,
-      isBuiltIn: true
-    },
-    {
-      id: 'f1',
-      name: 'F1 Score',
-      description: 'Harmonic mean of precision and recall',
-      enabled: true,
-      isBuiltIn: true
-    },
-    {
-      id: 'semantic_score',
-      name: 'Semantic Score',
-      description: 'LLM-based semantic similarity score between predicted and gold labels',
-      enabled: false,
-      isBuiltIn: true
+      id: 'standard_semantic_matching',
+      name: 'Standard Metrics with semantic matching and score',
+      description: 'Evaluation metrics using weighted bipartite matching with semantic evaluation',
+      enabled: true
     }
   ]);
 
   const [apiKeyStatus, setApiKeyStatus] = useState<{
     anthropic: boolean;
     openai: boolean;
+    google: boolean;
     loading: boolean;
-  }>({ anthropic: false, openai: false, loading: true });
+  }>({ anthropic: false, openai: false, google: false, loading: true });
 
   // Check API key status once on application load
   useEffect(() => {
@@ -64,6 +49,7 @@ export default function CausalExtractionFramework() {
         setApiKeyStatus({
           anthropic: status.anthropic,
           openai: status.openai,
+          google: status.google,
           loading: false
         });
       } catch (error) {
@@ -71,6 +57,7 @@ export default function CausalExtractionFramework() {
         setApiKeyStatus({
           anthropic: false,
           openai: false,
+          google: false,
           loading: false
         });
       }
@@ -95,7 +82,44 @@ export default function CausalExtractionFramework() {
   } = usePrompts();
   const { uploadedData, handleFileUpload, removeDataset, getStorageInfo, getDatasetMetadata } = useDataUpload();
 
+  // Auto-select first available dataset when uploadedData changes
+  useEffect(() => {
+    const availableDatasets = Object.keys(uploadedData);
+    if (availableDatasets.length > 0 && (!selectedDataset || !uploadedData[selectedDataset])) {
+      const firstDataset = availableDatasets[0];
+      setSelectedDataset(firstDataset);
+      console.log(`Auto-selected dataset: ${firstDataset}`);
+    }
+  }, [uploadedData, selectedDataset]);
+
   const handleRunEvaluation = async () => {
+    // Pre-flight validation checks
+    if (!selectedDataset) {
+      alert('Please select a dataset before running evaluation.');
+      return;
+    }
+    
+    if (!uploadedData[selectedDataset]) {
+      alert(`Selected dataset "${selectedDataset}" is not available. Please select a valid dataset.`);
+      return;
+    }
+    
+    if (selectedPrompts.length === 0) {
+      alert('Please select at least one prompt before running evaluation.');
+      return;
+    }
+    
+    if (selectedModels.length === 0) {
+      alert('Please select at least one model before running evaluation.');
+      return;
+    }
+    
+    const enabledMetrics = evaluationMetrics.filter(m => m.enabled);
+    if (enabledMetrics.length === 0) {
+      alert('Please enable at least one evaluation metric before running evaluation.');
+      return;
+    }
+    
     setActiveTab('progress');
     await runEvaluation(
       selectedPrompts,
