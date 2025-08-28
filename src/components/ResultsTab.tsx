@@ -22,7 +22,8 @@ export const ResultsTab: React.FC<ResultsTabProps> = ({ currentRun }) => {
   
   const chartData = currentRun.results.map(r => {
     const data: any = {
-      name: `${r.promptName}-${r.model}`
+      name: `${r.model}`
+      // ${r.promptName}-
     };
     
     // Automatically read displayedValues to know which values to display

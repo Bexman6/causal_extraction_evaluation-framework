@@ -265,11 +265,14 @@ export const parseRelationshipExtractionResponse = (response: string): ParsedRel
 };
 
 export const parseResponse = (response: string, task: TaskType): any[] => {
+  // Ensure response is a string - defensive programming for GPT-5 compatibility
+  const responseStr = typeof response === 'string' ? response : String(response || '');
+  
   if (task === 'entity_extraction') {
-    const parsed = parseEntityExtractionResponse(response);
+    const parsed = parseEntityExtractionResponse(responseStr);
     return parsed.entities;
   } else {
-    const parsed = parseRelationshipExtractionResponse(response);
+    const parsed = parseRelationshipExtractionResponse(responseStr);
     return parsed.relationships;
   }
 };

@@ -50,22 +50,18 @@ export const modelConfigs: ModelConfig[] = [
     supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
   },
   {
-    id: 'gpt-4',
-    name: 'GPT-4',
-    provider: 'openai',
-    modelId: 'gpt-4',
-    maxTokens: 4000,
-    temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
-  },
-  {
     id: 'gpt-4-turbo',
     name: 'GPT-4 Turbo',
     provider: 'openai',
     modelId: 'gpt-4-turbo-preview',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 10,
+      output: 30
+    },
+    description: 'High-performance model with 128k context window'
   },
   {
     id: 'gpt-3.5-turbo',
@@ -74,7 +70,162 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-3.5-turbo',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.50,
+      output: 1.50
+    },
+    description: 'Fast and cost-effective model for simple tasks'
+  },
+  
+  // New OpenAI Models
+  {
+    id: 'o1-pro',
+    name: 'o1-Pro',
+    provider: 'openai',
+    modelId: 'o1-pro',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 150,
+      output: 600
+    },
+    description: 'Most advanced reasoning model'
+  },
+  {
+    id: 'o3-pro',
+    name: 'o3-Pro',
+    provider: 'openai',
+    modelId: 'o3-pro',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 20,
+      output: 80
+    },
+    description: 'Highest-tier dedicated reasoning model'
+  },
+  {
+    id: 'o3',
+    name: 'o3',
+    provider: 'openai',
+    modelId: 'o3',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 2,
+      output: 8
+    },
+    description: 'General-purpose, step-by-step reasoning model'
+  },
+  {
+    id: 'o4-mini',
+    name: 'o4-mini',
+    provider: 'openai',
+    modelId: 'o4-mini',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 1.10,
+      output: 4.40
+    },
+    description: 'Efficient, multimodal reasoning model'
+  },
+  {
+    id: 'gpt-4-1',
+    name: 'GPT-4.1',
+    provider: 'openai',
+    modelId: 'gpt-4.1',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 2,
+      output: 8
+    },
+    description: 'Long-context, general-purpose model'
+  },
+  {
+    id: 'gpt-4-1-mini',
+    name: 'GPT-4.1 mini',
+    provider: 'openai',
+    modelId: 'gpt-4.1-mini',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.40,
+      output: 1.60
+    },
+    description: 'More affordable variant of GPT-4.1'
+  },
+  {
+    id: 'gpt-4-1-nano',
+    name: 'GPT-4.1 nano',
+    provider: 'openai',
+    modelId: 'gpt-4.1-nano',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.10,
+      output: 0.40
+    },
+    description: 'Fastest and least expensive option'
+  },
+  
+  // GPT-5 Models (Latest Generation)
+  {
+    id: 'gpt-5',
+    name: 'GPT-5',
+    provider: 'openai',
+    modelId: 'gpt-5',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 1.25,
+      output: 10.00
+    },
+    description: 'OpenAI\'s most advanced general-purpose model with expert-level intelligence',
+    reasoningEffort: 'high',
+    verbosity: 'medium'
+  },
+  {
+    id: 'gpt-5-mini',
+    name: 'GPT-5 mini',
+    provider: 'openai',
+    modelId: 'gpt-5-mini',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.25,
+      output: 2.00
+    },
+    description: 'Faster, cost-effective variant of GPT-5 with ~85-95% performance',
+    reasoningEffort: 'medium',
+    verbosity: 'low'
+  },
+  {
+    id: 'gpt-5-nano',
+    name: 'GPT-5 nano',
+    provider: 'openai',
+    modelId: 'gpt-5-nano',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.05,
+      output: 0.40
+    },
+    description: 'Most efficient GPT-5 variant optimized for speed and cost',
+    reasoningEffort: 'low',
+    verbosity: 'low'
   },
   
   // Google Gemini Models
@@ -252,14 +403,34 @@ export const STANDARD_SEMANTIC_ENTITY_PROMPT = `You are an expert evaluator of c
   ]
 }`;
 
-export const STANDARD_SEMANTIC_RELATIONSHIP_PROMPT = `You are evaluating relationship extraction predictions that did not exactly match the gold standard relationships. Your task is to determine how many of the predicted relationships are semantically equivalent to relationships in the gold standard, even if they don't match exactly.
+export const STANDARD_SEMANTIC_RELATIONSHIP_PROMPT = `You are an expert on evaluating causal relationships between entities based on their text of origin. You get relationship extraction predictions that did not exactly match the gold standard relationships. Your task is to determine is to compare predicted relationships against gold relationships and produce an evaluation. 
 
-Non-matching Predicted Relationships: {predicted}  
-Gold Standard Relationships: {gold}
+Focus on *semantic* rather than purely lexical overlap.  
+Treat synonyms, inflections, acronyms, abbreviations, and clear hypernym ↔ hyponym cases as potential matches (e.g., “CO₂ emissions” ≈ “carbon dioxide emissions”; “heart attack” ≈ “myocardial infarction”).  
+When unsure, rely on domain knowledge and common usage.  
+Produce an evaluation with these fields:
 
-Count how many predicted relationships are semantically equivalent to gold standard relationships (e.g., cause-effect pairs that express the same meaning with different wording).
+Evaluation procedure (think step-by-step privately, but show only the final JSON):
+  
+  1. **Normalize** relationships  
+   • lowercase, trim whitespace, remove punctuation that does not change meaning  
+   • expand common abbreviations (e.g., “GDP” → “gross domestic product”)  
 
-Return only a single number representing the count of semantic matches. Do not include any explanation.`;
+  2. **Match classes**  
+    • **semantic_matches** — After normalization, the cause and the effect in the predicted pair each denote the same concept as the corresponding gold entities (e.g., synonym: "MI" ≈ "myocardial infarction"; abbreviation: "LDL" ≈ "low-density lipoprotein"; hypernym/hyponym: "antihypertensives" ≈ "ACE inhibitors"). The edge’s direction (cause → effect) is the same, and the polarity is consistent (e.g., "increases risk of" ≈ "is a risk factor for"; "reduces" ≈ "lowers"; but not "increases" vs "decreases").  
+    • **partial_matches**  — On at least one side (cause or effect), one string is a strict substring of the other and both refer to the same underlying head concept (e.g., "acute myocardial infarction" vs "myocardial infarction"; "type 2 diabetes mellitus" vs "diabetes mellitus"). The other side is at least a semantic match (per rules above). Direction and polarity must be preserved.
+    
+  3. **Output format**  
+  Return a single valid **JSON** object with these keys *in the exact order shown*:  
+
+  {
+  "semantic_match_pairs": [
+    { "gold": "<gold relationship>", "predicted": "<predicted relationship>" }
+  ],
+  "partial_match_pairs": [
+    { "gold": "<gold relationship>", "predicted": "<predicted relationship>" }
+  ]
+}`;
 
 export const SEMANTIC_EVAL_MODEL_CONFIG: ModelConfig = {
     id: 'gpt-4-turbo',

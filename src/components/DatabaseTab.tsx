@@ -29,6 +29,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
   const [detailedSubtab, setDetailedSubtab] = useState<'entity_extraction' | 'relationship_extraction'>('entity_extraction');
   const [promptFilter, setPromptFilter] = useState('all');
   const [modelFilter, setModelFilter] = useState('all');
+  const [datasetFilter, setDatasetFilter] = useState('all');
   const [visibleMetrics, setVisibleMetrics] = useState<Set<string>>(new Set(['precision', 'recall', 'f1']));
   
   const sortedHistory = useMemo(() => {
@@ -105,13 +106,18 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
       taskResults = taskResults.filter(r => r.model === modelFilter);
     }
     
+    // Apply dataset filter
+    if (datasetFilter !== 'all') {
+      taskResults = taskResults.filter(r => r.dataset === datasetFilter);
+    }
+    
     // Sort by timestamp (most recent first) and limit to 5
     taskResults = taskResults
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, 5);
     
     return taskResults;
-  }, [runHistory, detailedSubtab, promptFilter, modelFilter]);
+  }, [runHistory, detailedSubtab, promptFilter, modelFilter, datasetFilter]);
 
   // Get all unique metrics used across all runs
   const allMetrics = useMemo(() => {
@@ -134,6 +140,11 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
   const uniqueModels = useMemo(() => {
     const models = new Set(runHistory.filter(r => r.task === detailedSubtab).map(r => r.model));
     return Array.from(models).sort();
+  }, [runHistory, detailedSubtab]);
+
+  const uniqueDatasets = useMemo(() => {
+    const datasets = new Set(runHistory.filter(r => r.task === detailedSubtab).map(r => r.dataset));
+    return Array.from(datasets).sort();
   }, [runHistory, detailedSubtab]);
 
   // Storage management functions
@@ -423,6 +434,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
                 setDetailedSubtab('entity_extraction');
                 setPromptFilter('all');
                 setModelFilter('all');
+                setDatasetFilter('all');
               }}
               className={`${
                 detailedSubtab === 'entity_extraction'
@@ -437,6 +449,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
                 setDetailedSubtab('relationship_extraction');
                 setPromptFilter('all');
                 setModelFilter('all');
+                setDatasetFilter('all');
               }}
               className={`${
                 detailedSubtab === 'relationship_extraction'
@@ -470,6 +483,17 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
             <option value="all">All Models</option>
             {uniqueModels.map(model => (
               <option key={model} value={model}>{model}</option>
+            ))}
+          </select>
+          
+          <select
+            className="border rounded px-3 py-1"
+            value={datasetFilter}
+            onChange={(e) => setDatasetFilter(e.target.value)}
+          >
+            <option value="all">All Datasets</option>
+            {uniqueDatasets.map(dataset => (
+              <option key={dataset} value={dataset}>{dataset}</option>
             ))}
           </select>
           
@@ -508,6 +532,9 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Model
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Dataset
+                </th>
                 {Array.from(visibleMetrics).map(metric => (
                   <th key={metric} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {metric.charAt(0).toUpperCase() + metric.slice(1).replace('_', ' ')}
@@ -523,6 +550,9 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {result.model}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {result.dataset}
                   </td>
                   {Array.from(visibleMetrics).map(metric => {
                     let value: number | undefined;
@@ -543,7 +573,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
               {detailedResults.length === 0 && (
                 <tr>
                   <td 
-                    colSpan={2 + Array.from(visibleMetrics).length} 
+                    colSpan={3 + Array.from(visibleMetrics).length} 
                     className="px-6 py-4 text-center text-sm text-gray-500"
                   >
                     No results found for the selected filters

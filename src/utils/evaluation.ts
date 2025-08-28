@@ -56,6 +56,8 @@ export const processEvaluationWithLLM = async (
 
       let predictions: any[] = [];
       
+      console.log(`THIS IS THE RAW RESPONSE FROM THE LLM:\n`, apiResponse);
+
       if (apiResponse.success && apiResponse.content) {
         try {
           predictions = parseResponse(apiResponse.content, task);

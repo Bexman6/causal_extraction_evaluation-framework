@@ -105,6 +105,47 @@ export interface ModelConfig {
   maxTokens?: number;
   temperature?: number;
   supportedTasks: TaskType[];
+  pricing?: {
+    input: number;  // Price per million input tokens
+    output: number; // Price per million output tokens
+  };
+  description?: string;
+  // GPT-5 specific parameters for Responses API
+  reasoningEffort?: 'low' | 'medium' | 'high';
+  verbosity?: 'low' | 'medium' | 'high';
+}
+
+// OpenAI Responses API response structure
+export interface ResponsesAPIResponse {
+  output_text?: string;
+  content?: string;
+  text?: string;
+  usage?: {
+    input_tokens: number;
+    output_tokens: number;
+  };
+  error?: {
+    message: string;
+    type: string;
+  };
+}
+
+// OpenAI Chat Completions API response structure
+export interface ChatCompletionsResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+  error?: {
+    message: string;
+    type: string;
+  };
 }
 
 export interface APIResponse {

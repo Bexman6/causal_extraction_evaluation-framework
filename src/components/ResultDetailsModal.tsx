@@ -1,5 +1,5 @@
 import React from 'react';
-import { EvaluationResult, MetricsResult } from '../types';
+import { EvaluationResult, MetricsResult, CausalRelationship } from '../types';
 
 interface ResultDetailsModalProps {
   selectedResult: EvaluationResult;
@@ -42,6 +42,43 @@ const getEntityColorClasses = (matchType: EntityMatchType): string => {
     case 'semantic': return 'bg-blue-100 text-blue-800';     // Blue: Semantic match  
     case 'partial': return 'bg-yellow-100 text-yellow-800';  // Yellow: Partial match
     case 'nomatch': return 'bg-red-100 text-red-800';        // Red: No match
+  }
+};
+
+// Enhanced relationship classification using semantic matching data
+type RelationshipMatchType = 'exact' | 'semantic' | 'partial' | 'nomatch';
+
+const areRelationshipsEqualInModal = (rel1: CausalRelationship, rel2: CausalRelationship): boolean => {
+  return normalizeString(rel1.cause) === normalizeString(rel2.cause) && 
+         normalizeString(rel1.effect) === normalizeString(rel2.effect);
+};
+
+const getRelationshipMatchType = (
+  relationship: CausalRelationship, 
+  semanticMatching: MetricsResult | undefined,
+  goldData: CausalRelationship[]
+): RelationshipMatchType => {
+  if (!semanticMatching) {
+    // Fallback: check if relationship exists in gold data using exact matching
+    const hasExactMatch = goldData.some(goldRel => areRelationshipsEqualInModal(relationship, goldRel));
+    return hasExactMatch ? 'exact' : 'nomatch';
+  }
+  
+  // Check semantic matching categorization arrays (relationships are stored as JSON strings)
+  const relationshipStr = JSON.stringify(relationship);
+  if (semanticMatching.exact?.includes(relationshipStr)) return 'exact';
+  if (semanticMatching.semantic?.includes(relationshipStr)) return 'semantic';
+  if (semanticMatching.partial?.includes(relationshipStr)) return 'partial';
+  return 'nomatch';
+};
+
+// Color mapping for relationship match types (same colors as entities)
+const getRelationshipColorClasses = (matchType: RelationshipMatchType): string => {
+  switch (matchType) {
+    case 'exact': return 'bg-green-100 text-green-800 border-green-200';      // Green: Perfect match
+    case 'semantic': return 'bg-blue-100 text-blue-800 border-blue-200';     // Blue: Semantic match  
+    case 'partial': return 'bg-yellow-100 text-yellow-800 border-yellow-200'; // Yellow: Partial match
+    case 'nomatch': return 'bg-red-100 text-red-800 border-red-200';         // Red: No match
   }
 };
 
@@ -207,6 +244,28 @@ export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                       </span>
                     </div>
                   )}
+
+                  {/* Color coding legend for relationship semantic matching */}
+                  {selectedResult.metrics.semanticMatching && selectedResult.task === 'relationship_extraction' && (
+                    <div className="mb-2 text-xs text-gray-600 flex gap-3 flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-green-100 rounded border border-green-200"></div>
+                        Exact
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-blue-100 rounded border border-blue-200"></div>  
+                        Semantic
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-yellow-100 rounded border border-yellow-200"></div>
+                        Partial
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-red-100 rounded border border-red-200"></div>
+                        No Match
+                      </span>
+                    </div>
+                  )}
                   
                   <div className="text-sm space-y-1">
                     {selectedResult.task === 'entity_extraction' ? (
@@ -231,13 +290,26 @@ export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                         })}
                       </div>
                     ) : (
-                      sentenceResult.predictions.map((rel, i) => (
-                        <div key={i} className="p-2 bg-blue-50 rounded">
-                          <span className="font-medium">Cause:</span> {rel.cause} → 
-                          <span className="font-medium ml-1">Effect:</span> {rel.effect}
-                          {rel.confidence && <span className="ml-1 text-xs text-gray-500">(conf: {rel.confidence.toFixed(2)})</span>}
-                        </div>
-                      ))
+                      sentenceResult.predictions.map((rel, i) => {
+                        const matchType = getRelationshipMatchType(
+                          rel,
+                          selectedResult.metrics.semanticMatching,
+                          sentenceResult.goldData
+                        );
+                        const colorClasses = getRelationshipColorClasses(matchType);
+                        
+                        return (
+                          <div 
+                            key={i} 
+                            className={`p-2 rounded border ${colorClasses}`}
+                            title={`Match type: ${matchType}`}
+                          >
+                            <span className="font-medium">Cause:</span> {rel.cause} → 
+                            <span className="font-medium ml-1">Effect:</span> {rel.effect}
+                            {rel.confidence && <span className="ml-1 text-xs opacity-75">(conf: {rel.confidence.toFixed(2)})</span>}
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 </div>
