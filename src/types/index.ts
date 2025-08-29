@@ -95,7 +95,7 @@ export interface EvaluationMetric {
 
 export type TabType = 'setup' | 'evaluation' | 'progress' | 'results' | 'database';
 
-export type ModelProvider = 'anthropic' | 'openai' | 'google';
+export type ModelProvider = 'anthropic' | 'openai' | 'google' | 'deepseek';
 
 export interface ModelConfig {
   id: string;

@@ -228,6 +228,36 @@ export const modelConfigs: ModelConfig[] = [
     verbosity: 'low'
   },
   
+  // DeepSeek Models
+  {
+    id: 'deepseek-v3-1-chat',
+    name: 'DeepSeek-V3.1 (Non-thinking Mode)',
+    provider: 'deepseek',
+    modelId: 'deepseek-chat',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.27,
+      output: 1.10
+    },
+    description: 'Fast, cost-effective model for conventional tasks with 128K context window'
+  },
+  {
+    id: 'deepseek-v3-1-reasoner',
+    name: 'DeepSeek-V3.1 (Thinking Mode)',
+    provider: 'deepseek',
+    modelId: 'deepseek-reasoner',
+    maxTokens: 4000,
+    temperature: 0.0,
+    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    pricing: {
+      input: 0.55,
+      output: 2.19
+    },
+    description: 'Advanced reasoning model with thinking capabilities and 128K context window'
+  },
+  
   // Google Gemini Models
   {
     id: 'gemini-2-5-pro',

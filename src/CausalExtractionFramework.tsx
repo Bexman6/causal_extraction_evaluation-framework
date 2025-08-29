@@ -37,8 +37,9 @@ export default function CausalExtractionFramework() {
     anthropic: boolean;
     openai: boolean;
     google: boolean;
+    deepseek: boolean;
     loading: boolean;
-  }>({ anthropic: false, openai: false, google: false, loading: true });
+  }>({ anthropic: false, openai: false, google: false, deepseek: false, loading: true });
 
   // Check API key status once on application load
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function CausalExtractionFramework() {
           anthropic: status.anthropic,
           openai: status.openai,
           google: status.google,
+          deepseek: status.deepseek,
           loading: false
         });
       } catch (error) {
@@ -58,6 +60,7 @@ export default function CausalExtractionFramework() {
           anthropic: false,
           openai: false,
           google: false,
+          deepseek: false,
           loading: false
         });
       }

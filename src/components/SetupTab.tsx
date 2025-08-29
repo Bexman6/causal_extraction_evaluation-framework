@@ -35,6 +35,7 @@ interface SetupTabProps {
     anthropic: boolean;
     openai: boolean;
     google: boolean;
+    deepseek: boolean;
     loading: boolean;
   };
 }
@@ -69,7 +70,7 @@ export const SetupTab: React.FC<SetupTabProps> = ({
   const [selectedMetricSets, setSelectedMetricSets] = useState<string[]>(['standard_semantic_matching']);
   const [showJsonPreview, setShowJsonPreview] = useState(false);
 
-  const getProviderIcon = (provider: 'anthropic' | 'openai' | 'google') => {
+  const getProviderIcon = (provider: 'anthropic' | 'openai' | 'google' | 'deepseek') => {
     if (apiKeyStatus.loading) {
       return <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>;
     }
@@ -80,7 +81,7 @@ export const SetupTab: React.FC<SetupTabProps> = ({
       <AlertCircle className="w-4 h-4 text-red-600" />;
   };
 
-  const getModelsByProvider = (provider: 'anthropic' | 'openai' | 'google') => {
+  const getModelsByProvider = (provider: 'anthropic' | 'openai' | 'google' | 'deepseek') => {
     return modelConfigs.filter(model => model.provider === provider);
   };
 
@@ -352,10 +353,16 @@ export const SetupTab: React.FC<SetupTabProps> = ({
                 Google
               </span>
             </div>
+            <div className="flex items-center space-x-1">
+              {getProviderIcon('deepseek')}
+              <span className={`${apiKeyStatus.deepseek ? 'text-green-600' : 'text-red-600'}`}>
+                DeepSeek
+              </span>
+            </div>
           </div>
         </div>
 
-        {!apiKeyStatus.anthropic && !apiKeyStatus.openai && !apiKeyStatus.google && !apiKeyStatus.loading && (
+        {!apiKeyStatus.anthropic && !apiKeyStatus.openai && !apiKeyStatus.google && !apiKeyStatus.deepseek && !apiKeyStatus.loading && (
           <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
             <div className="flex items-start space-x-2">
               <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
@@ -367,7 +374,8 @@ export const SetupTab: React.FC<SetupTabProps> = ({
                 <div className="mt-2 font-mono text-xs bg-yellow-100 p-2 rounded">
                   ANTHROPIC_API_KEY=your_key_here<br />
                   OPENAI_API_KEY=your_key_here<br />
-                  GOOGLE_API_KEY=your_key_here
+                  GOOGLE_API_KEY=your_key_here<br />
+                  DEEPSEEK_API_KEY=your_key_here
                 </div>
               </div>
             </div>
@@ -375,14 +383,14 @@ export const SetupTab: React.FC<SetupTabProps> = ({
         )}
 
         <div className="space-y-4">
-          {['anthropic', 'openai', 'google'].map(provider => {
-            const providerModels = getModelsByProvider(provider as 'anthropic' | 'openai' | 'google');
-            const providerValid = apiKeyStatus[provider as 'anthropic' | 'openai' | 'google'];
+          {['anthropic', 'openai', 'google', 'deepseek'].map(provider => {
+            const providerModels = getModelsByProvider(provider as 'anthropic' | 'openai' | 'google' | 'deepseek');
+            const providerValid = apiKeyStatus[provider as 'anthropic' | 'openai' | 'google' | 'deepseek'];
             
             return (
               <div key={provider} className="border rounded-lg p-4">
                 <div className="flex items-center space-x-2 mb-3">
-                  {getProviderIcon(provider as 'anthropic' | 'openai' | 'google')}
+                  {getProviderIcon(provider as 'anthropic' | 'openai' | 'google' | 'deepseek')}
                   <h4 className="font-medium capitalize">{provider}</h4>
                   {!providerValid && !apiKeyStatus.loading && (
                     <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">API Key Required</span>

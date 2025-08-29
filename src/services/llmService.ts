@@ -72,10 +72,33 @@ class GoogleService implements LLMService {
   }
 }
 
+class DeepSeekService implements LLMService {
+  private proxyService: ProxyLLMService;
+
+  constructor() {
+    this.proxyService = ProxyLLMServiceFactory.getService({
+      id: 'deepseek',
+      name: 'DeepSeek',
+      provider: 'deepseek',
+      modelId: 'deepseek-chat',
+      supportedTasks: ['entity_extraction', 'relationship_extraction']
+    });
+  }
+
+  async callModel(request: LLMRequest): Promise<APIResponse> {
+    return this.proxyService.callModel(request);
+  }
+
+  async validateApiKeys(): Promise<boolean> {
+    return this.proxyService.validateApiKeys();
+  }
+}
+
 export class LLMServiceFactory {
   private static anthropicService = new AnthropicService();
   private static openaiService = new OpenAIService();
   private static googleService = new GoogleService();
+  private static deepseekService = new DeepSeekService();
 
   static getService(model: ModelConfig): LLMService {
     switch (model.provider) {
@@ -85,12 +108,14 @@ export class LLMServiceFactory {
         return this.openaiService;
       case 'google':
         return this.googleService;
+      case 'deepseek':
+        return this.deepseekService;
       default:
         throw new Error(`Unsupported model provider: ${model.provider}`);
     }
   }
 
-  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean; google: boolean }> {
+  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean; google: boolean; deepseek: boolean }> {
     return ProxyLLMServiceFactory.validateAllApiKeys();
   }
 }

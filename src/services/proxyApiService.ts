@@ -160,6 +160,80 @@ class ProxyGoogleService implements ProxyLLMService {
   }
 }
 
+class ProxyDeepSeekService implements ProxyLLMService {
+  async callModel(request: LLMRequest): Promise<APIResponse> {
+    const startTime = Date.now();
+    
+    try {
+      const response = await fetch('/api/deepseek/v1/chat/completions', {
+        method: 'POST',
+        // Let the proxy handle all headers including Content-Type and authentication
+        body: JSON.stringify({
+          model: request.model.modelId,
+          max_tokens: request.maxTokens ?? 4000,
+          temperature: request.temperature ?? 0.0,
+          messages: [
+            {
+              role: 'user',
+              content: request.prompt
+            }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      const latency = Date.now() - startTime;
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.error?.message || `HTTP ${response.status}: ${response.statusText}`,
+          latency
+        };
+      }
+
+      return {
+        success: true,
+        content: data.choices[0]?.message?.content || '',
+        latency,
+        tokens: {
+          input: data.usage?.prompt_tokens || 0,
+          output: data.usage?.completion_tokens || 0,
+          total: data.usage?.total_tokens || 0
+        }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error occurred',
+        latency: Date.now() - startTime
+      };
+    }
+  }
+
+  async validateApiKeys(): Promise<boolean> {
+    try {
+      const testRequest: LLMRequest = {
+        prompt: 'Test',
+        model: {
+          id: 'deepseek-v3-1-chat',
+          name: 'DeepSeek-V3.1 Chat',
+          provider: 'deepseek',
+          modelId: 'deepseek-chat',
+          supportedTasks: ['entity_extraction', 'relationship_extraction']
+        },
+        temperature: 0.1,
+        maxTokens: 10
+      };
+
+      const result = await this.callModel(testRequest);
+      return result.success;
+    } catch {
+      return false;
+    }
+  }
+}
+
 class ProxyOpenAIService implements ProxyLLMService {
   async callModel(request: LLMRequest): Promise<APIResponse> {
     // GPT-5 models use the Responses API for advanced reasoning features
@@ -495,6 +569,7 @@ export class ProxyLLMServiceFactory {
   private static anthropicService = new ProxyAnthropicService();
   private static openaiService = new ProxyOpenAIService();
   private static googleService = new ProxyGoogleService();
+  private static deepseekService = new ProxyDeepSeekService();
 
   static getService(model: ModelConfig): ProxyLLMService {
     switch (model.provider) {
@@ -504,29 +579,34 @@ export class ProxyLLMServiceFactory {
         return this.openaiService;
       case 'google':
         return this.googleService;
+      case 'deepseek':
+        return this.deepseekService;
       default:
         throw new Error(`Unsupported model provider: ${model.provider}`);
     }
   }
 
-  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean; google: boolean }> {
+  static async validateAllApiKeys(): Promise<{ anthropic: boolean; openai: boolean; google: boolean; deepseek: boolean }> {
     try {
-      const [anthropicValid, openaiValid, googleValid] = await Promise.all([
+      const [anthropicValid, openaiValid, googleValid, deepseekValid] = await Promise.all([
         this.anthropicService.validateApiKeys(),
         this.openaiService.validateApiKeys(),
-        this.googleService.validateApiKeys()
+        this.googleService.validateApiKeys(),
+        this.deepseekService.validateApiKeys()
       ]);
 
       return {
         anthropic: anthropicValid,
         openai: openaiValid,
-        google: googleValid
+        google: googleValid,
+        deepseek: deepseekValid
       };
     } catch {
       return {
         anthropic: false,
         openai: false,
-        google: false
+        google: false,
+        deepseek: false
       };
     }
   }
