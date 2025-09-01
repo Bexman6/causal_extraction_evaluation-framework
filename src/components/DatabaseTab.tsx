@@ -26,7 +26,7 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
   const [showStorageInfo, setShowStorageInfo] = useState(false);
   
   // Detailed results subtab states
-  const [detailedSubtab, setDetailedSubtab] = useState<'entity_extraction' | 'relationship_extraction'>('entity_extraction');
+  const [detailedSubtab, setDetailedSubtab] = useState<'entity_extraction' | 'relation_classification'>('entity_extraction');
   const [promptFilter, setPromptFilter] = useState('all');
   const [modelFilter, setModelFilter] = useState('all');
   const [datasetFilter, setDatasetFilter] = useState('all');
@@ -446,18 +446,18 @@ export const DatabaseTab: React.FC<DatabaseTabProps> = ({
             </button>
             <button
               onClick={() => {
-                setDetailedSubtab('relationship_extraction');
+                setDetailedSubtab('relation_classification');
                 setPromptFilter('all');
                 setModelFilter('all');
                 setDatasetFilter('all');
               }}
               className={`${
-                detailedSubtab === 'relationship_extraction'
+                detailedSubtab === 'relation_classification'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm`}
             >
-              Relationship Extraction
+              Relation Classification
             </button>
           </nav>
         </div>

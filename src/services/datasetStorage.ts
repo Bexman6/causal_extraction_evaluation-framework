@@ -1,4 +1,5 @@
 import { Dataset } from '../types';
+import { FileSystemStorageService, FileSystemDatasetInfo } from './fileSystemStorage';
 
 /**
  * Interface for the data structure stored in localStorage for datasets
@@ -12,6 +13,7 @@ interface StoredDatasets {
     uploadDate: number;         // When it was uploaded
     fileSize: number;           // Size in bytes
     isValid: boolean;           // Validation status
+    storageLocation?: string;   // Where the dataset is stored ('localStorage' | 'filesystem')
   }>;
   metadata: {                   // Additional metadata for management
     totalDatasets: number;
@@ -24,6 +26,8 @@ interface StoredDatasets {
 const STORAGE_KEY = 'causal-extraction-datasets';
 // Current version for data migration handling
 const CURRENT_VERSION = '1.0';
+// Size threshold for using file system storage (1MB)
+const LARGE_DATASET_THRESHOLD = 1024 * 1024;
 
 /**
  * Validation result interface
@@ -35,12 +39,32 @@ export interface DatasetValidationResult {
 }
 
 /**
- * Service for managing persistent storage of datasets in localStorage
+ * Service for managing persistent storage of datasets with hybrid storage support
  * Handles saving, loading, and managing dataset data across browser sessions
+ * Uses localStorage for small datasets and file system for large datasets
  */
 export class DatasetStorageService {
   private static storageKey = STORAGE_KEY;
   private static version = CURRENT_VERSION;
+  private static fileSystemAvailable: boolean | null = null;
+
+  /**
+   * Check if file system storage is available
+   */
+  private static async checkFileSystemAvailability(): Promise<boolean> {
+    if (this.fileSystemAvailable === null) {
+      this.fileSystemAvailable = await FileSystemStorageService.isAvailable();
+    }
+    return this.fileSystemAvailable;
+  }
+
+  /**
+   * Determine storage method based on dataset size
+   */
+  private static shouldUseFileSystem(dataset: Dataset, fileSize?: number): boolean {
+    const estimatedSize = fileSize || FileSystemStorageService.estimateDatasetSize(dataset);
+    return estimatedSize >= LARGE_DATASET_THRESHOLD;
+  }
 
   /**
    * Validates a dataset structure
@@ -166,7 +190,7 @@ export class DatasetStorageService {
    * Saves datasets to localStorage with version and timestamp metadata
    * @param datasets - Record of dataset name to dataset data
    */
-  static saveDatasets(datasets: Record<string, { data: Dataset; filename: string; uploadDate: number; fileSize: number; isValid: boolean; }>): void {
+  static saveDatasets(datasets: Record<string, { data: Dataset; filename: string; uploadDate: number; fileSize: number; isValid: boolean; storageLocation?: string; }>): void {
     try {
       const dataToStore: StoredDatasets = {
         version: this.version,
@@ -187,10 +211,58 @@ export class DatasetStorageService {
   }
 
   /**
-   * Loads datasets from localStorage
+   * Loads datasets from both localStorage and file system (hybrid loading)
    * @returns Record of dataset name to dataset data
    */
-  static loadDatasets(): Record<string, { data: Dataset; filename: string; uploadDate: number; fileSize: number; isValid: boolean; }> {
+  static async loadAllDatasets(): Promise<Record<string, { data: Dataset; filename: string; uploadDate: number; fileSize: number; isValid: boolean; storageLocation?: string }>> {
+    const result: Record<string, { data: Dataset; filename: string; uploadDate: number; fileSize: number; isValid: boolean; storageLocation?: string }> = {};
+    
+    // Load from localStorage first
+    const localStorageDatasets = this.loadDatasets();
+    Object.entries(localStorageDatasets).forEach(([name, datasetInfo]) => {
+      result[name] = {
+        ...datasetInfo,
+        storageLocation: datasetInfo.storageLocation || 'localStorage'
+      };
+    });
+    
+    // Load from file system if available
+    const fileSystemAvailable = await this.checkFileSystemAvailability();
+    if (fileSystemAvailable) {
+      const fileSystemList = await FileSystemStorageService.listDatasets();
+      
+      if (fileSystemList.success && fileSystemList.data) {
+        for (const fileInfo of fileSystemList.data) {
+          const datasetResult = await FileSystemStorageService.loadDataset(fileInfo.name);
+          
+          if (datasetResult.success && datasetResult.data) {
+            // Prefer file system version if it's newer or if localStorage version doesn't exist
+            const localVersion = result[fileInfo.name];
+            const shouldUseFileSystem = !localVersion || fileInfo.lastModified > localVersion.uploadDate;
+            
+            if (shouldUseFileSystem) {
+              result[fileInfo.name] = {
+                data: datasetResult.data,
+                filename: fileInfo.filename,
+                uploadDate: fileInfo.lastModified,
+                fileSize: fileInfo.size,
+                isValid: fileInfo.isValid,
+                storageLocation: 'filesystem'
+              };
+            }
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Loads datasets from localStorage (legacy method)
+   * @returns Record of dataset name to dataset data
+   */
+  static loadDatasets(): Record<string, { data: Dataset; filename: string; uploadDate: number; fileSize: number; isValid: boolean; storageLocation?: string }> {
     try {
       const storedData = localStorage.getItem(this.storageKey);
       if (!storedData) {
@@ -212,25 +284,124 @@ export class DatasetStorageService {
   }
 
   /**
-   * Adds a new dataset to storage
+   * Adds a new dataset to storage using hybrid storage strategy
    * @param name - Dataset name
    * @param dataset - Dataset data
    * @param filename - Original filename
    * @param fileSize - File size in bytes
    */
-  static addDataset(name: string, dataset: Dataset, filename: string, fileSize: number): void {
-    const existingDatasets = this.loadDatasets();
-    const validation = this.validateDataset(dataset, filename);
-    
-    existingDatasets[name] = {
-      data: dataset,
-      filename,
-      uploadDate: Date.now(),
-      fileSize,
-      isValid: validation.isValid
-    };
-    
-    this.saveDatasets(existingDatasets);
+  static async addDataset(name: string, dataset: Dataset, filename: string, fileSize: number): Promise<{ success: boolean; storageMethod: string; error?: string }> {
+    try {
+      const validation = this.validateDataset(dataset, filename);
+      
+      if (!validation.isValid) {
+        return {
+          success: false,
+          storageMethod: 'none',
+          error: `Validation failed: ${validation.errors.join(', ')}`
+        };
+      }
+
+      const useFileSystem = this.shouldUseFileSystem(dataset, fileSize);
+      const fileSystemAvailable = await this.checkFileSystemAvailability();
+
+      if (useFileSystem && fileSystemAvailable) {
+        // Large dataset: Use file system storage
+        const result = await FileSystemStorageService.saveDataset(name, dataset, filename);
+        
+        if (result.success) {
+          // Also save metadata to localStorage for quick access
+          const existingDatasets = this.loadDatasets();
+          existingDatasets[name] = {
+            data: dataset, // Keep data for compatibility, but flag as file-system stored
+            filename,
+            uploadDate: Date.now(),
+            fileSize,
+            isValid: true,
+            storageLocation: 'filesystem' // New field to track storage location
+          };
+          
+          try {
+            this.saveDatasets(existingDatasets);
+          } catch (localStorageError) {
+            // localStorage failed, but file system succeeded - that's okay
+            console.warn('localStorage save failed, but dataset saved to file system:', localStorageError);
+          }
+          
+          return {
+            success: true,
+            storageMethod: 'filesystem'
+          };
+        } else {
+          // File system failed, fallback to localStorage if possible
+          if (fileSize < 5 * 1024 * 1024) { // 5MB localStorage limit
+            console.warn('File system storage failed, falling back to localStorage');
+            return this.addToLocalStorageOnly(name, dataset, filename, fileSize);
+          } else {
+            return {
+              success: false,
+              storageMethod: 'none',
+              error: `File system storage failed and dataset too large for localStorage: ${result.error}`
+            };
+          }
+        }
+      } else {
+        // Small dataset or file system unavailable: Use localStorage
+        const result = this.addToLocalStorageOnly(name, dataset, filename, fileSize);
+        
+        // If file system is available, also backup to file system
+        if (fileSystemAvailable && result.success) {
+          FileSystemStorageService.backupToFileSystem(name, dataset)
+            .then(backed_up => {
+              if (backed_up) {
+                console.log(`📁 Dataset "${name}" backed up to file system`);
+              }
+            })
+            .catch(error => {
+              console.warn(`Failed to backup dataset "${name}" to file system:`, error);
+            });
+        }
+        
+        return result;
+      }
+    } catch (error) {
+      return {
+        success: false,
+        storageMethod: 'none',
+        error: `Storage error: ${error}`
+      };
+    }
+  }
+
+  /**
+   * Add dataset to localStorage only (legacy method)
+   */
+  private static addToLocalStorageOnly(name: string, dataset: Dataset, filename: string, fileSize: number): { success: boolean; storageMethod: string; error?: string } {
+    try {
+      const existingDatasets = this.loadDatasets();
+      
+      existingDatasets[name] = {
+        data: dataset,
+        filename,
+        uploadDate: Date.now(),
+        fileSize,
+        isValid: true,
+        storageLocation: 'localStorage'
+      };
+      
+      this.saveDatasets(existingDatasets);
+      
+      return {
+        success: true,
+        storageMethod: 'localStorage'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        storageMethod: 'none',
+        error: `localStorage save failed: ${error}`
+      };
+    }
   }
 
   /**

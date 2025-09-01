@@ -6,26 +6,60 @@ import { DatasetStorageService, DatasetValidationResult } from '../services/data
 export const useDataUpload = () => {
   const [uploadedData, setUploadedData] = useState<Record<string, Dataset>>(mockTestData);
 
-  // Load stored datasets on initialization
+  // Load stored datasets on initialization with hybrid loading
   useEffect(() => {
-    try {
-      const storedDatasets = DatasetStorageService.loadDatasets();
-      const datasetMap: Record<string, Dataset> = { ...mockTestData };
-      
-      // Convert stored datasets to the format expected by the app
-      Object.entries(storedDatasets).forEach(([name, datasetInfo]) => {
-        if (datasetInfo.isValid) {
-          datasetMap[name] = datasetInfo.data;
+    const loadAllDatasets = async () => {
+      try {
+        // Load from both localStorage and file system
+        const storedDatasets = await DatasetStorageService.loadAllDatasets();
+        const datasetMap: Record<string, Dataset> = { ...mockTestData };
+        
+        // Convert stored datasets to the format expected by the app
+        Object.entries(storedDatasets).forEach(([name, datasetInfo]) => {
+          if (datasetInfo.isValid) {
+            datasetMap[name] = datasetInfo.data;
+            
+            // Log storage location for debugging
+            const location = datasetInfo.storageLocation || 'localStorage';
+            console.log(`📂 Loaded dataset "${name}" from ${location} (${Math.round(datasetInfo.fileSize / 1024)}KB)`);
+          }
+        });
+        
+        setUploadedData(datasetMap);
+        
+        const totalDatasets = Object.keys(storedDatasets).length;
+        const fileSystemDatasets = Object.values(storedDatasets).filter(d => d.storageLocation === 'filesystem').length;
+        const localStorageDatasets = totalDatasets - fileSystemDatasets;
+        
+        console.log(`✅ Loaded ${totalDatasets} datasets total:`);
+        console.log(`   📁 File System: ${fileSystemDatasets} datasets`);
+        console.log(`   💾 localStorage: ${localStorageDatasets} datasets`);
+        
+      } catch (error) {
+        console.error('Error loading datasets from hybrid storage:', error);
+        
+        // Fallback to localStorage only
+        try {
+          const storedDatasets = DatasetStorageService.loadDatasets();
+          const datasetMap: Record<string, Dataset> = { ...mockTestData };
+          
+          Object.entries(storedDatasets).forEach(([name, datasetInfo]) => {
+            if (datasetInfo.isValid) {
+              datasetMap[name] = datasetInfo.data;
+            }
+          });
+          
+          setUploadedData(datasetMap);
+          console.warn('⚠️ Fallback: Loaded datasets from localStorage only');
+        } catch (fallbackError) {
+          console.error('Error loading datasets from localStorage fallback:', fallbackError);
+          setUploadedData(mockTestData);
+          console.warn('⚠️ Ultimate fallback: Using mock data only');
         }
-      });
-      
-      setUploadedData(datasetMap);
-      console.log(`Loaded ${Object.keys(storedDatasets).length} datasets from storage`);
-    } catch (error) {
-      console.error('Error loading datasets from storage:', error);
-      // Fallback to mock data only
-      setUploadedData(mockTestData);
-    }
+      }
+    };
+    
+    loadAllDatasets();
   }, []);
 
   const showValidationError = (validation: DatasetValidationResult, filename: string) => {
@@ -73,7 +107,7 @@ export const useDataUpload = () => {
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const fileContent = e.target?.result as string;
         const data = JSON.parse(fileContent);
@@ -99,26 +133,50 @@ export const useDataUpload = () => {
         }
         
         try {
-          // Save to persistent storage
-          DatasetStorageService.addDataset(datasetName, data, file.name, file.size);
+          // Determine storage method based on size
+          const sizeKB = Math.round(file.size / 1024);
+          const sizeMB = Math.round(file.size / (1024 * 1024) * 100) / 100;
+          const isLarge = file.size >= 1024 * 1024; // 1MB threshold
           
-          // Update component state
-          setUploadedData(prev => ({
-            ...prev,
-            [datasetName]: data
-          }));
+          console.log(`📤 Uploading dataset "${datasetName}" (${sizeKB}KB) - ${isLarge ? 'Large dataset, using file system' : 'Small dataset, using localStorage + backup'}`);
           
-          setSelectedDataset(datasetName);
+          // Save to hybrid persistent storage
+          const storageResult = await DatasetStorageService.addDataset(datasetName, data, file.name, file.size);
           
-          let successMessage = `Dataset "${datasetName}" uploaded successfully!`;
-          if (validation.warnings.length > 0) {
-            successMessage += `\n\nNote: ${validation.warnings.length} warning(s) were found but the dataset is valid.`;
+          if (storageResult.success) {
+            // Update component state
+            setUploadedData(prev => ({
+              ...prev,
+              [datasetName]: data
+            }));
+            
+            setSelectedDataset(datasetName);
+            
+            // Create success message with storage details
+            let successMessage = `Dataset "${datasetName}" uploaded successfully!\n`;
+            successMessage += `Size: ${sizeMB}MB\n`;
+            successMessage += `Storage: ${storageResult.storageMethod === 'filesystem' ? '📁 File System (data/datasets/)' : '💾 localStorage + File Backup'}`;
+            
+            if (validation.warnings.length > 0) {
+              successMessage += `\n\nNote: ${validation.warnings.length} warning(s) were found but the dataset is valid.`;
+            }
+            
+            alert(successMessage);
+          } else {
+            // Storage failed
+            console.error('Failed to save dataset:', storageResult.error);
+            alert(`Dataset "${datasetName}" validation succeeded but storage failed:\n\n${storageResult.error}\n\nThe dataset will only be available for this session.`);
+            
+            // Still update the component state for this session
+            setUploadedData(prev => ({
+              ...prev,
+              [datasetName]: data
+            }));
+            setSelectedDataset(datasetName);
           }
-          
-          alert(successMessage);
         } catch (storageError) {
-          console.error('Failed to save dataset:', storageError);
-          alert(`Dataset "${datasetName}" validated successfully but failed to save to persistent storage. It will only be available for this session.`);
+          console.error('Unexpected storage error:', storageError);
+          alert(`Dataset "${datasetName}" validated successfully but failed to save due to an unexpected error. It will only be available for this session.`);
           
           // Still update the component state for this session
           setUploadedData(prev => ({

@@ -246,7 +246,7 @@ export const ResultDetailsModal: React.FC<ResultDetailsModalProps> = ({
                   )}
 
                   {/* Color coding legend for relationship semantic matching */}
-                  {selectedResult.metrics.semanticMatching && selectedResult.task === 'relationship_extraction' && (
+                  {selectedResult.metrics.semanticMatching && selectedResult.task === 'relation_classification' && (
                     <div className="mb-2 text-xs text-gray-600 flex gap-3 flex-wrap">
                       <span className="flex items-center gap-1">
                         <div className="w-3 h-3 bg-green-100 rounded border border-green-200"></div>

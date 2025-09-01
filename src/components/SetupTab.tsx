@@ -144,14 +144,14 @@ export const SetupTab: React.FC<SetupTabProps> = ({
           <label className="flex items-center space-x-3">
             <input
               type="radio"
-              checked={selectedTask === 'relationship_extraction'}
+              checked={selectedTask === 'relation_classification'}
               onChange={() => {
-                setSelectedTask('relationship_extraction');
+                setSelectedTask('relation_classification');
                 setSelectedPrompts([]);
               }}
               className="text-blue-600"
             />
-            <span>Causal Relationship Extraction</span>
+            <span>Causal Relation Classification</span>
           </label>
         </div>
       </div>

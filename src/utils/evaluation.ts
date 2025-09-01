@@ -32,7 +32,7 @@ export const processEvaluationWithLLM = async (
       };
 
       // Add entities variable for relationship extraction
-      if (task === 'relationship_extraction') {
+      if (task === 'relation_classification') {
         variables.entities = sentence.gold_entities.join(', ');
       }
 

@@ -1,0 +1,1629 @@
+{
+  "textBlocks": [
+    {
+      "id": "s1",
+      "text": "The period of tumor shrinkage after radiation therapy is often long and varied (mean months).",
+      "gold_entities": [
+        "tumor shrinkage",
+        "radiation therapy"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "radiation therapy",
+          "effect": "tumor shrinkage"
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "text": "Habitat degradation from within stream channels, loss of riparian vegetation, and reductions in water quality degrade and also limit the population.",
+      "gold_entities": [
+        "Habitat degradation",
+        "stream channels"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s3",
+      "text": "Earplugs relieve the discomfort from traveling with a cold allergy or sinus condition.",
+      "gold_entities": [
+        "discomfort",
+        "traveling"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "traveling",
+          "effect": "discomfort"
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "text": "We continue to see progress toward a world free of the daily terror of antipersonnel land mines.",
+      "gold_entities": [
+        "daily terror",
+        "antipersonnel land mines"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "antipersonnel land mines",
+          "effect": "daily terror"
+        }
+      ]
+    },
+    {
+      "id": "s5",
+      "text": "The Global Warming segment starts off with two, cute anecdotes about flowers blooming early and aardvarks moving North.",
+      "gold_entities": [
+        "segment",
+        "anecdotes"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s6",
+      "text": "The report links conditions in some of the worst affected localities and the likelihood that dire poverty — combined with despair and outrage over rampant corruption, repressive policies, and governments' failure to address local needs — could lead to outbreaks of localised unrest with the potential to spread into a wider regional conflict.",
+      "gold_entities": [
+        "outrage",
+        "rampant corruption"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "rampant corruption",
+          "effect": "outrage"
+        }
+      ]
+    },
+    {
+      "id": "s7",
+      "text": "Literary criticism is the study of literature by means of a microscopic knowledge of the language in which a book is written, of its growth from various roots, of its stages of development and the factors influencing them, of its condition in the period of this particular composition, of the writer's idiosyncrasies of thought and style in his ripening periods, of the general history and literature of his race, and of the special characteristics of his age and of his contemporary writers.",
+      "gold_entities": [
+        "growth",
+        "roots"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s8",
+      "text": "Famine following drought has hit the West African savannahs, where there have been other bad droughts, notably the great one of 1972-74.",
+      "gold_entities": [
+        "Famine",
+        "drought"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "drought",
+          "effect": "Famine"
+        }
+      ]
+    },
+    {
+      "id": "s9",
+      "text": "People in Hawaii might be feeling aftershocks from that powerful earthquake for weeks.",
+      "gold_entities": [
+        "aftershocks",
+        "earthquake"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "earthquake",
+          "effect": "aftershocks"
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "text": "One newly formed Iraqi battalion is on duty, with scheduled for activation by summer 2004.",
+      "gold_entities": [
+        "activation",
+        "summer"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s11",
+      "text": "Zinc is essential for growth and cell division.",
+      "gold_entities": [
+        "Zinc",
+        "growth"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "Zinc",
+          "effect": "growth"
+        }
+      ]
+    },
+    {
+      "id": "s12",
+      "text": "The typical flu infection starts with fever, muscular pains, headache and general fatigue.",
+      "gold_entities": [
+        "flu infection",
+        "fever"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s13",
+      "text": "Apartment residents in Delaware were awarded $million for health problems attributed to mold growth from unrepaired leaks.",
+      "gold_entities": [
+        "mold growth",
+        "unrepaired leaks"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "unrepaired leaks",
+          "effect": "mold growth"
+        }
+      ]
+    },
+    {
+      "id": "s14",
+      "text": "This industry and way of life, however, is in trouble as salmon decline due to habitat degradation from dams, clearcutting, and overgrazing along streams.",
+      "gold_entities": [
+        "habitat degradation",
+        "dams"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "dams",
+          "effect": "habitat degradation"
+        }
+      ]
+    },
+    {
+      "id": "s15",
+      "text": "It is widely known that significant reductions of these levels produce pastries with poor lift in the oven and with unacceptable shrinkage after cooling.",
+      "gold_entities": [
+        "shrinkage",
+        "cooling"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "cooling",
+          "effect": "shrinkage"
+        }
+      ]
+    },
+    {
+      "id": "s16",
+      "text": "Teens will find a realistic model for improving self-esteem, confronting challenges head on and the possibilities of achievement through perseverance.",
+      "gold_entities": [
+        "achievement",
+        "perseverance"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "perseverance",
+          "effect": "achievement"
+        }
+      ]
+    },
+    {
+      "id": "s17",
+      "text": "The age of first marriage does not predict happiness after marriage.",
+      "gold_entities": [
+        "happiness",
+        "marriage"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s18",
+      "text": "It is simple and ideal when all you want to do is freshen up clothes or smooth out wrinkles from garments that have been stored away.",
+      "gold_entities": [
+        "wrinkles",
+        "garments"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s19",
+      "text": "As long as a surviving multiplexed copy of the controlfile exists, recovery from loss of a controlfile is simple.",
+      "gold_entities": [
+        "recovery",
+        "loss"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s20",
+      "text": "He predicts that the severe famine following the good years would require a political and economic reorganization in the country.",
+      "gold_entities": [
+        "famine",
+        "good years"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s21",
+      "text": "The film also features documentary like segments about fishing and about the evacuation after the eruption of the volcano.",
+      "gold_entities": [
+        "evacuation",
+        "eruption"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s22",
+      "text": "I believe that unless we take this issue seriously, the red squirrel is facing eventual extinction from the woods of Scotland.",
+      "gold_entities": [
+        "extinction",
+        "woods"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s23",
+      "text": "There should be no revenue increase from the tax cuts - except possibly from the cuts in the higher tax rates.",
+      "gold_entities": [
+        "revenue increase",
+        "tax cuts"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "tax cuts",
+          "effect": "revenue increase"
+        }
+      ]
+    },
+    {
+      "id": "s24",
+      "text": "The following are very basic tips which may help you manage your anxiety in the exam.",
+      "gold_entities": [
+        "anxiety",
+        "exam"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s25",
+      "text": "There exists a widespread controversy over stem cell research that emanates from the techniques used in the creation and usage of stem cells.",
+      "gold_entities": [
+        "controversy",
+        "stem cell research"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "stem cell research",
+          "effect": "controversy"
+        }
+      ]
+    },
+    {
+      "id": "s26",
+      "text": "The order reaches the office in minutes, allowing the order staff to start fulfillment from warehouse inventory.",
+      "gold_entities": [
+        "fulfillment",
+        "warehouse inventory"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s27",
+      "text": "Aromatherapy can be used for stress relief through massage with sedatives like lavender and sweet marjoram.",
+      "gold_entities": [
+        "stress relief",
+        "massage"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "massage",
+          "effect": "stress relief"
+        }
+      ]
+    },
+    {
+      "id": "s28",
+      "text": "The findings clearly show a high level of satisfaction from customers using new cutting-edge retail technology that has led to higher sales.",
+      "gold_entities": [
+        "satisfaction",
+        "customers"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s29",
+      "text": "The resulting anti-social behaviour from alcohol consumption is an on-going matter that the town and the police continue to address, particularly in the summer months.",
+      "gold_entities": [
+        "anti-social behaviour",
+        "alcohol consumption"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "alcohol consumption",
+          "effect": "anti-social behaviour"
+        }
+      ]
+    },
+    {
+      "id": "s30",
+      "text": "Complementing the data from PARK, GeoFEST will model the evolution of stress and strain in a detailed simulation of the crust and mantle, potentially helping researchers predict the deformation from an earthquake or a series of quakes.",
+      "gold_entities": [
+        "deformation",
+        "earthquake"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "earthquake",
+          "effect": "deformation"
+        }
+      ]
+    },
+    {
+      "id": "s31",
+      "text": "Any injury from the neck to the shoulder of the brachial plexus would leave the arm useless.",
+      "gold_entities": [
+        "injury",
+        "neck"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s32",
+      "text": "It is likely that the nausea comes from abnormal sensations originating from areas of the brain that are sensing the lack of oxygen.",
+      "gold_entities": [
+        "nausea",
+        "abnormal sensations"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "abnormal sensations",
+          "effect": "nausea"
+        }
+      ]
+    },
+    {
+      "id": "s33",
+      "text": "That seems to me like an accusation out of ignorance seeing that you don't even know what my characters name is.",
+      "gold_entities": [
+        "accusation",
+        "ignorance"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "ignorance",
+          "effect": "accusation"
+        }
+      ]
+    },
+    {
+      "id": "s34",
+      "text": "In summer 2000, an Adventist church in Polotsk, Vitebsk Region, was damaged by a fire started with flammable liquids.",
+      "gold_entities": [
+        "fire",
+        "flammable liquids"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "flammable liquids",
+          "effect": "fire"
+        }
+      ]
+    },
+    {
+      "id": "s35",
+      "text": "Genuine joy comes from profound spiritual awareness on life and an absolute clarity of direction, living for a purpose.",
+      "gold_entities": [
+        "joy",
+        "spiritual awareness"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "spiritual awareness",
+          "effect": "joy"
+        }
+      ]
+    },
+    {
+      "id": "s36",
+      "text": "Ginkgo is added for increased circulation to the reproductive system.",
+      "gold_entities": [
+        "Ginkgo",
+        "increased circulation"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s37",
+      "text": "During discussion of the legislation concerns, were raised that the inclusion of protection from exposure to the sun would place too heavy a burden on a number of smaller companies, especially building firms and small catering concerns, which may have a lot of outside workers.",
+      "gold_entities": [
+        "protection",
+        "exposure"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s38",
+      "text": "These characteristics are inconsistent with observations from earthquakes of comparable distance and magnitude to those that dominate the hazard at Yucca Mountain.",
+      "gold_entities": [
+        "observations",
+        "earthquakes"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s39",
+      "text": "Eye discomfort from this staring effect is exacerbated by low humidity.",
+      "gold_entities": [
+        "discomfort",
+        "staring effect"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "staring effect",
+          "effect": "discomfort"
+        }
+      ]
+    },
+    {
+      "id": "s40",
+      "text": "Jane Jacobs has argued that all economic progress comes from urban places, that cities are the source of economic prosperity, and the role of rural areas inevitably becomes less important as development takes place.",
+      "gold_entities": [
+        "economic progress",
+        "urban places"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s41",
+      "text": "He derives great joy and happiness from cycling.",
+      "gold_entities": [
+        "happiness",
+        "cycling"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "cycling",
+          "effect": "happiness"
+        }
+      ]
+    },
+    {
+      "id": "s42",
+      "text": "The pollution in rain comes from mercury air pollution from coal-fired power plants and other industries.",
+      "gold_entities": [
+        "pollution",
+        "mercury air pollution"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "mercury air pollution",
+          "effect": "pollution"
+        }
+      ]
+    },
+    {
+      "id": "s43",
+      "text": "In order for handwashing to be effective, vigorous friction, ample lather from soap, and thorough rinsing are needed to remove the germs from the hands.",
+      "gold_entities": [
+        "lather",
+        "soap"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s44",
+      "text": "Alabama has since enacted legislation, allowing death by lethal injection as an alternative choice to death in the electric chair.",
+      "gold_entities": [
+        "death",
+        "lethal injection"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "lethal injection",
+          "effect": "death"
+        }
+      ]
+    },
+    {
+      "id": "s45",
+      "text": "Gurra Krantz, skipper of the still leading yacht SEB reports some frustration after yesterday's exhilarating rides.",
+      "gold_entities": [
+        "frustration",
+        "yesterday's exhilarating rides"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s46",
+      "text": "Driving with sleep deprivation can have similar effects as driving under the influence.",
+      "gold_entities": [
+        "Driving",
+        "sleep deprivation"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s47",
+      "text": "Sudden death from inhalation of petroleum distillates is well recognised in misuses of volatile substances.",
+      "gold_entities": [
+        "death",
+        "inhalation"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "inhalation",
+          "effect": "death"
+        }
+      ]
+    },
+    {
+      "id": "s48",
+      "text": "The good friar was insistent on both celibacy and abstinence from laughter.",
+      "gold_entities": [
+        "abstinence",
+        "laughter"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s49",
+      "text": "Nausea is the sensation of unease and discomfort from the stomach, with the sufferers feeling that they may vomit.",
+      "gold_entities": [
+        "discomfort",
+        "stomach"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s50",
+      "text": "And because of a last minute collapse from top to bottom - what would be and should be a perfect season to this point is just another year.",
+      "gold_entities": [
+        "collapse",
+        "top"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s51",
+      "text": "The randomized hypertensive ABCD study demonstrated a decrease in myocardial infarction with ACE inhibitors and a decrease in overall mortality with aggressive blood pressure control.",
+      "gold_entities": [
+        "decrease",
+        "blood pressure control"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "blood pressure control",
+          "effect": "decrease"
+        }
+      ]
+    },
+    {
+      "id": "s52",
+      "text": "It was also felt necessary at this time to draw up a similar document, dealing not with the prevention of marine pollution by dumping, but instead with the prevention of marine pollution by discharges of dangerous substances from land-based sources, watercourses or pipelines.",
+      "gold_entities": [
+        "marine pollution",
+        "dumping"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "dumping",
+          "effect": "marine pollution"
+        }
+      ]
+    },
+    {
+      "id": "s53",
+      "text": "Delay and procrastination set you up for frustration after frustration.",
+      "gold_entities": [
+        "frustration",
+        "frustration"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s54",
+      "text": "Continuous improvement starts with the measuring of the process performance, and the instigation of a robust process for reviewing further changes logically and quickly.",
+      "gold_entities": [
+        "Continuous improvement",
+        "measuring"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s55",
+      "text": "The risks of this procedure include anesthesia complications (especially General), post-operative difficulty breathing, and sore throat from intubation.",
+      "gold_entities": [
+        "sore throat",
+        "intubation"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "intubation",
+          "effect": "sore throat"
+        }
+      ]
+    },
+    {
+      "id": "s56",
+      "text": "During periods of wide blood sugar fluctuations and after any change in insulin dose, the blood sugar must also be measured during the night.",
+      "gold_entities": [
+        "blood sugar fluctuations",
+        "change"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s57",
+      "text": "Their chemical activation by light (halogen, plasma, lasers, etc.) enhances their efficiency by reducing exposure time and number of appointments.",
+      "gold_entities": [
+        "activation",
+        "light"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "light",
+          "effect": "activation"
+        }
+      ]
+    },
+    {
+      "id": "s58",
+      "text": "The spiciness comes from small capsaicin glands located between the pepper's outside skin and the white ribs inside.",
+      "gold_entities": [
+        "spiciness",
+        "capsaicin glands"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "capsaicin glands",
+          "effect": "spiciness"
+        }
+      ]
+    },
+    {
+      "id": "s59",
+      "text": "You can see the wrinkles from 'Meredith's'face and you can even understand by looking the series that she is really about same age as 'Bailey'.",
+      "gold_entities": [
+        "wrinkles",
+        "face"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s60",
+      "text": "Someone once said that progress comes from dissatisfaction.",
+      "gold_entities": [
+        "progress",
+        "dissatisfaction"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "dissatisfaction",
+          "effect": "progress"
+        }
+      ]
+    },
+    {
+      "id": "s61",
+      "text": "Ray Parlour shows his frustration after Middlesbrough's defeat.",
+      "gold_entities": [
+        "frustration",
+        "defeat"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "defeat",
+          "effect": "frustration"
+        }
+      ]
+    },
+    {
+      "id": "s62",
+      "text": "If governments were once content to passively realize the benefits from funding basic research, the determination to be part of the knowledge-based economy has driven OECD countries to extract greater direct benefits from publicly funded research.",
+      "gold_entities": [
+        "benefits",
+        "funding basic research"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "funding basic research",
+          "effect": "benefits"
+        }
+      ]
+    },
+    {
+      "id": "s63",
+      "text": "The troubled company is still feeling aftershocks after its devastating withdrawal of the pain medication Vioxx six months ago.",
+      "gold_entities": [
+        "aftershocks",
+        "withdrawal"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "withdrawal",
+          "effect": "aftershocks"
+        }
+      ]
+    },
+    {
+      "id": "s64",
+      "text": "Two sides search for the naked truth in the fight over a painting on display in a Florida shop.",
+      "gold_entities": [
+        "fight",
+        "painting"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "painting",
+          "effect": "fight"
+        }
+      ]
+    },
+    {
+      "id": "s65",
+      "text": "In the months leading up to trade negotiations, estimates of the economic gains from trade liberalization suddenly become newsworthy.",
+      "gold_entities": [
+        "economic gains",
+        "trade liberalization"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "trade liberalization",
+          "effect": "economic gains"
+        }
+      ]
+    },
+    {
+      "id": "s66",
+      "text": "The design of the shape of the can ends moreover has a marked effect on their ability to resist deformation from internal pressure.",
+      "gold_entities": [
+        "deformation",
+        "internal pressure"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "internal pressure",
+          "effect": "deformation"
+        }
+      ]
+    },
+    {
+      "id": "s67",
+      "text": "This understanding is consistent with behavioural studies that have failed to clearly distinguish between people with drinking problems and others.",
+      "gold_entities": [
+        "drinking",
+        "problems"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "drinking",
+          "effect": "problems"
+        }
+      ]
+    },
+    {
+      "id": "s68",
+      "text": "Myles and Simpson also identify defensive behaviour from learners like lashing out verbally or physically or threatening the educators or other learners and withdrawing from others emotionally or physically.",
+      "gold_entities": [
+        "defensive behaviour",
+        "learners"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s69",
+      "text": "In the most common form of such an attack, called ischemic stroke, the blockage comes from a blood clot that develops in one of the brain's blood vessels.",
+      "gold_entities": [
+        "blockage",
+        "blood clot"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "blood clot",
+          "effect": "blockage"
+        }
+      ]
+    },
+    {
+      "id": "s70",
+      "text": "Rain comes from evaporated seawater, transferring not just water but the solar energy that took it from the sea.",
+      "gold_entities": [
+        "Rain",
+        "evaporated seawater"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s71",
+      "text": "Women may experience anxiety from the time they first learn about the breast abnormality.",
+      "gold_entities": [
+        "anxiety",
+        "time"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s72",
+      "text": "Manila radio station DZMM quoted survivors as saying that the fire started with an explosion in the cargo hold and spread across the ship within minutes.",
+      "gold_entities": [
+        "fire",
+        "explosion"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "explosion",
+          "effect": "fire"
+        }
+      ]
+    },
+    {
+      "id": "s73",
+      "text": "Saunders felt a resurgence of the panic from this morning when he'd regained consciousness in the minefield.",
+      "gold_entities": [
+        "panic",
+        "morning"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s74",
+      "text": "Thatch is caused by excessive growth from overfertilizing, by allowing the grass to get too high before mowing, or by incorrect watering.",
+      "gold_entities": [
+        "excessive growth",
+        "overfertilizing"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "overfertilizing",
+          "effect": "excessive growth"
+        }
+      ]
+    },
+    {
+      "id": "s75",
+      "text": "At normal room temperatures, flammable liquids can give off enough vapour to form burnable mixtures with air.",
+      "gold_entities": [
+        "flammable liquids",
+        "vapour"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s76",
+      "text": "Two years ago, President George W. Bush ordered the activation by the end of of a system capable of defending the United States against a missile attack by a terrorist group or an unfriendly rogue state such as North Korea.",
+      "gold_entities": [
+        "activation",
+        "end"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s77",
+      "text": "Most of the excitement came from the anticipation of winning a nice prize, all for the sum of one dollar.",
+      "gold_entities": [
+        "excitement",
+        "anticipation"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "anticipation",
+          "effect": "excitement"
+        }
+      ]
+    },
+    {
+      "id": "s78",
+      "text": "Anyone seeking hair reduction by laser treatment should first consult with a dermatologist, says Moore.",
+      "gold_entities": [
+        "hair reduction",
+        "laser treatment"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "laser treatment",
+          "effect": "hair reduction"
+        }
+      ]
+    },
+    {
+      "id": "s79",
+      "text": "The check given by Charles V to the advance of the Ottoman power along the African coast made him appear to the world as the liberator of the Christians and the terror of the infidels, and gave him such prestige that Francis felt obliged to get all the advantage possible out of his alliance.",
+      "gold_entities": [
+        "terror",
+        "infidels"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s80",
+      "text": "Polystyrene with average molecular weight of 250,000-350,is particularly preferable because it is excellent in prevention of shrinkage after high-ratio expansion, and in balance of strength and fusing property.",
+      "gold_entities": [
+        "shrinkage",
+        "expansion"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s81",
+      "text": "Although Harry noticed it during exercise, the change that was identified was the difference in muscular discomfort from the beginning of his training program (riding five miles per day) to his current status two months later.",
+      "gold_entities": [
+        "discomfort",
+        "beginning"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s82",
+      "text": "Yoga is fantastic for increased flexibility, which is great for cross-training with all the other programs we offer.",
+      "gold_entities": [
+        "Yoga",
+        "increased flexibility"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "Yoga",
+          "effect": "increased flexibility"
+        }
+      ]
+    },
+    {
+      "id": "s83",
+      "text": "There are three set changes and two intervals which help the recovery from laughter, but the entertainment is maintained despite the well expected ending.",
+      "gold_entities": [
+        "recovery",
+        "laughter"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s84",
+      "text": "Polar bears and hippos have joined the ranks of species threatened with extinction from climate change, unregulated hunting and other dangers created by humans.",
+      "gold_entities": [
+        "extinction",
+        "climate change"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "climate change",
+          "effect": "extinction"
+        }
+      ]
+    },
+    {
+      "id": "s85",
+      "text": "It is commonly accepted that progress comes from science, debate, inference, logic and reasoning.",
+      "gold_entities": [
+        "progress",
+        "science"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "science",
+          "effect": "progress"
+        }
+      ]
+    },
+    {
+      "id": "s86",
+      "text": "Adults with sleep deprivation who listened to soft classical music at bedtime reported a percent improvement in their quality of sleep.",
+      "gold_entities": [
+        "Adults",
+        "sleep deprivation"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s87",
+      "text": "In fact, nobody received a drinking injury the whole weekend.",
+      "gold_entities": [
+        "drinking",
+        "injury"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "drinking",
+          "effect": "injury"
+        }
+      ]
+    },
+    {
+      "id": "s88",
+      "text": "Surgery after radiation chemotherapy is an effective local treatment, which is able to significantly increase local tumor control compared to radiation chemotherapy only.",
+      "gold_entities": [
+        "Surgery",
+        "radiation chemotherapy"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s89",
+      "text": "In the event of an evacuation after normal business hours, the on-duty Security Officer and maintenance personnel will be responsible for the notification and evacuation of occupants of all buildings.",
+      "gold_entities": [
+        "evacuation",
+        "business hours"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s90",
+      "text": "Hand creams counteract dryness from exposure to wind, sun, and detergents.",
+      "gold_entities": [
+        "dryness",
+        "exposure"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "exposure",
+          "effect": "dryness"
+        }
+      ]
+    },
+    {
+      "id": "s91",
+      "text": "In a departure from previous liftoffs, ground and aircraft cameras monitored Discovery for possible damage from falling debris.",
+      "gold_entities": [
+        "damage",
+        "debris"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "debris",
+          "effect": "damage"
+        }
+      ]
+    },
+    {
+      "id": "s92",
+      "text": "Craig expressed his frustration after Monday's meeting.",
+      "gold_entities": [
+        "frustration",
+        "meeting"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s93",
+      "text": "Companies face big risk from loss of key employees.",
+      "gold_entities": [
+        "risk",
+        "loss"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "loss",
+          "effect": "risk"
+        }
+      ]
+    },
+    {
+      "id": "s94",
+      "text": "Ancient pagan traditions used famine following feast as a way of revealing truth.",
+      "gold_entities": [
+        "famine",
+        "feast"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s95",
+      "text": "'The Incredible Shrinking Man' follows Matheson's novel and effectively captures the terror of the protagonist as he shrinks to oblivion.",
+      "gold_entities": [
+        "terror",
+        "protagonist"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s96",
+      "text": "Clinton Portis, who missed last week's game against Dallas because of a shoulder injury from the preseason, rushed for yards on attempts to become the fifth-fastest player to reach the 6,000-yard mark in his career.",
+      "gold_entities": [
+        "shoulder injury",
+        "preseason"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s97",
+      "text": "This daily assault of inflammation in their digestive system, plus the inflammation from your joints and an overworked immune system and excess weight can easily exceed the amount of inflammation your body can effectively handle.",
+      "gold_entities": [
+        "inflammation",
+        "joints"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s98",
+      "text": "However, some may be able to perform minutes of moderate-intensity exercise two to three hours after breakfast without a high risk of hypoglycemia, despite slightly higher insulin levels after eating.",
+      "gold_entities": [
+        "higher insulin levels",
+        "eating"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "eating",
+          "effect": "higher insulin levels"
+        }
+      ]
+    },
+    {
+      "id": "s99",
+      "text": "The moisturizers' primary function is to keep skin moist, minimize wrinkles from dryness, smoothe and soften skin, and to deliver other ingredients, like sunscreen, that benefit the skin.",
+      "gold_entities": [
+        "wrinkles",
+        "dryness"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "dryness",
+          "effect": "wrinkles"
+        }
+      ]
+    },
+    {
+      "id": "s100",
+      "text": "As a result of direct persecution, habitat loss and habitat degradation from 1950s until 1990s, brown bear population has decreased so much.",
+      "gold_entities": [
+        "habitat degradation",
+        "1950s"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s101",
+      "text": "Inhibition through synaptic depression is unlike the previous forms of inhibition in that it turns on more slowly and thus acts as delayed negative feedback.",
+      "gold_entities": [
+        "Inhibition",
+        "synaptic depression"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "synaptic depression",
+          "effect": "Inhibition"
+        }
+      ]
+    },
+    {
+      "id": "s102",
+      "text": "A city nightclub has had an ambitious expansion plan blocked over concerns about unruly behaviour from drunken revellers.",
+      "gold_entities": [
+        "unruly behaviour",
+        "drunken revellers"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s103",
+      "text": "However, these animals are found in the intertidal zone, inside tide pools, where salinity can increase due to evaporation from exposure to intense sunshine, or decrease from heavy rainfall or fresh water runoffs.",
+      "gold_entities": [
+        "evaporation",
+        "exposure"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "exposure",
+          "effect": "evaporation"
+        }
+      ]
+    },
+    {
+      "id": "s104",
+      "text": "There were the years of constant fatigue and shortness of breath, the heart attack at age 11, the collapse from exhaustion on her high school graduation night.",
+      "gold_entities": [
+        "collapse",
+        "exhaustion"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "exhaustion",
+          "effect": "collapse"
+        }
+      ]
+    },
+    {
+      "id": "s105",
+      "text": "Depression after heart attack increases future risk.",
+      "gold_entities": [
+        "Depression",
+        "heart attack"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s106",
+      "text": "Examples include the exclusion of certain benefits from funding standards and the exclusion of entire plans from certain funding requirements.",
+      "gold_entities": [
+        "exclusion",
+        "funding standards"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s107",
+      "text": "This program will be an effective step to mitigate damage from hurricanes - but let us not forget this is a retroactive measure.",
+      "gold_entities": [
+        "damage",
+        "hurricanes"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "hurricanes",
+          "effect": "damage"
+        }
+      ]
+    },
+    {
+      "id": "s108",
+      "text": "I know another drinking accident happened in the Gallup area the other day, which is plagued by drinking and driving accidents.",
+      "gold_entities": [
+        "drinking",
+        "accident"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s109",
+      "text": "Scientific progress comes from breakthroughs and breakthroughs by their very nature are unpredictable and surprising in their impact.",
+      "gold_entities": [
+        "Scientific progress",
+        "breakthroughs"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "breakthroughs",
+          "effect": "Scientific progress"
+        }
+      ]
+    },
+    {
+      "id": "s110",
+      "text": "Declines of great gray owls in California may be due to habitat degradation from logging, grazing, and development.",
+      "gold_entities": [
+        "habitat degradation",
+        "logging"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "logging",
+          "effect": "habitat degradation"
+        }
+      ]
+    },
+    {
+      "id": "s111",
+      "text": "That year, summer students at the VLA made the first discovery of radio emission from a brown dwarf.",
+      "gold_entities": [
+        "radio emission",
+        "dwarf"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s112",
+      "text": "Parents also experience anxiety from fear of the suffering of their child and worry about an uncertain outcome.",
+      "gold_entities": [
+        "anxiety",
+        "fear"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "fear",
+          "effect": "anxiety"
+        }
+      ]
+    },
+    {
+      "id": "s113",
+      "text": "Kids love watching the stages of growth from caterpillar to cocoon to butterfly in this easy reliable kit.",
+      "gold_entities": [
+        "growth",
+        "caterpillar"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s114",
+      "text": "Grubs tend to cause significant damage from autumn to spring by which time the larvae are becoming fully grown.",
+      "gold_entities": [
+        "damage",
+        "autumn"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s115",
+      "text": "Cooperation through physical activity promotes important life skills.",
+      "gold_entities": [
+        "Cooperation",
+        "physical activity"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s116",
+      "text": "Villagers live in constant terror of indiscriminate gunfire which fills the nights throughout Chechnya.",
+      "gold_entities": [
+        "terror",
+        "indiscriminate gunfire"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "indiscriminate gunfire",
+          "effect": "terror"
+        }
+      ]
+    },
+    {
+      "id": "s117",
+      "text": "From our point of view, the moral outrage over Manet's painting seems hypocritical, if not utterly inexplicable.",
+      "gold_entities": [
+        "moral outrage",
+        "painting"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "painting",
+          "effect": "moral outrage"
+        }
+      ]
+    },
+    {
+      "id": "s118",
+      "text": "This lamp can cause serious skin burn and eye inflammation from shortwave ultraviolet radiation if outer envelope of the lamp is broken or punctured.",
+      "gold_entities": [
+        "eye inflammation",
+        "shortwave ultraviolet radiation"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "shortwave ultraviolet radiation",
+          "effect": "eye inflammation"
+        }
+      ]
+    },
+    {
+      "id": "s119",
+      "text": "St John's wort was at least as effective as paroxetine in reducing severity of depression after six weeks.",
+      "gold_entities": [
+        "depression",
+        "weeks"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s120",
+      "text": "A tear or a crease changes the character of the surface more drastically than a mere deformation from roundness.",
+      "gold_entities": [
+        "deformation",
+        "roundness"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "roundness",
+          "effect": "deformation"
+        }
+      ]
+    },
+    {
+      "id": "s121",
+      "text": "In this study we examined mood alterations through physical activity and other interventions.",
+      "gold_entities": [
+        "mood alterations",
+        "physical activity"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s122",
+      "text": "Anemia, fatigue or drowsiness after meals may indicate that parasites are competing with the body for nutrients.",
+      "gold_entities": [
+        "drowsiness",
+        "meals"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s123",
+      "text": "Waves from earthquakes travel at different velocities through different media.",
+      "gold_entities": [
+        "Waves",
+        "earthquakes"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "earthquakes",
+          "effect": "Waves"
+        }
+      ]
+    },
+    {
+      "id": "s124",
+      "text": "Insulin resistance with sleep deprivation has been reported in a laboratory study of young, healthy volunteers.",
+      "gold_entities": [
+        "Insulin resistance",
+        "sleep deprivation"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s125",
+      "text": "Energy expenditure through physical activity is a key component in the prevention and treatment of overweight and obesity.",
+      "gold_entities": [
+        "Energy expenditure",
+        "physical activity"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "physical activity",
+          "effect": "Energy expenditure"
+        }
+      ]
+    },
+    {
+      "id": "s126",
+      "text": "You can do a simple experiment which shows how important sun is for growth by planting a seed and putting it in a closet.",
+      "gold_entities": [
+        "sun",
+        "growth"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s127",
+      "text": "In addition, scientists may have a number of potentially useful targets to prevent and treat this lethal tumour because of the findings that NOXmediated overproduction of hydrogen peroxide is responsible for increased growth and decreased death of cancer cells.",
+      "gold_entities": [
+        "overproduction",
+        "growth"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "overproduction",
+          "effect": "growth"
+        }
+      ]
+    },
+    {
+      "id": "s128",
+      "text": "The controlled environment facility is for growth of experimental material only.",
+      "gold_entities": [
+        "facility",
+        "growth"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s129",
+      "text": "This can be caused by hepatitis, alcoholic liver disease, liver inflammation from medications, fatty liver, liver tumors, or heart failure.",
+      "gold_entities": [
+        "liver inflammation",
+        "medications"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "medications",
+          "effect": "liver inflammation"
+        }
+      ]
+    },
+    {
+      "id": "s130",
+      "text": "It has opened a sacred refuge for every lie and wrong; no wildest form of which could fail to find some precedent within these Hebrew histories, which tell the story of a people's upward growth from savagery.",
+      "gold_entities": [
+        "growth",
+        "savagery"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s131",
+      "text": "Six glowing disks await activation by the footsteps of desert wanderers.",
+      "gold_entities": [
+        "activation",
+        "footsteps"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "footsteps",
+          "effect": "activation"
+        }
+      ]
+    },
+    {
+      "id": "s132",
+      "text": "Tub drains clog up with hair and the grease from soap and must be cleaned out occasionally.",
+      "gold_entities": [
+        "grease",
+        "soap"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s133",
+      "text": "Thailand has been bracing itself for a downturn in the wake of the bombs, especially in the tourist sector.",
+      "gold_entities": [
+        "downturn",
+        "bombs"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "bombs",
+          "effect": "downturn"
+        }
+      ]
+    },
+    {
+      "id": "s134",
+      "text": "To the shock of international observers, the Libyan court found the medics guilty last year and sentenced them to death by firing squad.",
+      "gold_entities": [
+        "death",
+        "firing squad"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s135",
+      "text": "This prescription drug alleviates panic from claustrophobia and is also very handy for airplane rides and in case of broken-down subway cars or elevators.",
+      "gold_entities": [
+        "panic",
+        "claustrophobia"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "claustrophobia",
+          "effect": "panic"
+        }
+      ]
+    },
+    {
+      "id": "s136",
+      "text": "Everybody in the region experienced the tremors after midnight.",
+      "gold_entities": [
+        "tremors",
+        "midnight"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s137",
+      "text": "Deposits grew 20% with particularly good growth from corporates.",
+      "gold_entities": [
+        "growth",
+        "corporates"
+      ],
+      "gold_relationships": []
+    },
+    {
+      "id": "s138",
+      "text": "The studies revealed that skin irritation from soaps, inaccessibility to supplies or sinks, and insufficient time to wash hands between every patient care contact were the main reasons given by healthcare workers for lack of handwashing compliance.",
+      "gold_entities": [
+        "skin irritation",
+        "soaps"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "soaps",
+          "effect": "skin irritation"
+        }
+      ]
+    },
+    {
+      "id": "s139",
+      "text": "Infection starts with manual execution of the binary.",
+      "gold_entities": [
+        "Infection",
+        "manual execution"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "manual execution",
+          "effect": "Infection"
+        }
+      ]
+    },
+    {
+      "id": "s140",
+      "text": "Anthony finds inspiration in a beautiful, enigmatic older woman who teaches him to follow his heart and find happiness through swing dancing.",
+      "gold_entities": [
+        "happiness",
+        "swing dancing"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "swing dancing",
+          "effect": "happiness"
+        }
+      ]
+    }
+  ]
+}

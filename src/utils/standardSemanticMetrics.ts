@@ -758,7 +758,7 @@ const findMaxWeightMatching = (
  * Implements conservation laws: TPw ≤ min(G, P) through 1↔1 matching constraint
  * 
  * @param sentenceResults - Array of sentence-level prediction results from the model
- * @param task - Type of extraction task ('entity_extraction' or 'relationship_extraction')
+ * @param task - Type of extraction task ('entity_extraction' or 'relation_classification')
  * @returns Promise<StandardSemanticMetricsResult> Detailed results with metrics and categorized match lists
  */
 export const calculateStandardSemanticMetrics = async (

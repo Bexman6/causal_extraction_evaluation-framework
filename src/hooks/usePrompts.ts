@@ -30,7 +30,7 @@ export const usePrompts = () => {
       // Fallback to empty prompts if storage fails
       setPrompts({
         entity_extraction: [],
-        relationship_extraction: []
+        relation_classification: []
       });
     }
   }, []);

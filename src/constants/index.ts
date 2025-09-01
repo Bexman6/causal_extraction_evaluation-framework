@@ -9,7 +9,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'claude-opus-4-20250514',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   {
     id: 'claude-4-sonnet',
@@ -18,7 +18,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'claude-sonnet-4-20250514',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   
   // Claude 3.5 Models
@@ -29,7 +29,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'claude-3-5-opus-20241022',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   {
     id: 'claude-3-5-sonnet',
@@ -38,7 +38,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'claude-3-5-sonnet-20241022',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   {
     id: 'claude-3-5-haiku',
@@ -47,7 +47,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'claude-3-5-haiku-20241022',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   {
     id: 'gpt-4-turbo',
@@ -56,7 +56,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-4-turbo-preview',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 10,
       output: 30
@@ -70,7 +70,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-3.5-turbo',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.50,
       output: 1.50
@@ -86,7 +86,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'o1-pro',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 150,
       output: 600
@@ -100,7 +100,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'o3-pro',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 20,
       output: 80
@@ -114,7 +114,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'o3',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 2,
       output: 8
@@ -128,7 +128,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'o4-mini',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 1.10,
       output: 4.40
@@ -142,7 +142,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-4.1',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 2,
       output: 8
@@ -156,7 +156,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-4.1-mini',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.40,
       output: 1.60
@@ -170,7 +170,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-4.1-nano',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.10,
       output: 0.40
@@ -186,7 +186,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-5',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 1.25,
       output: 10.00
@@ -202,7 +202,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-5-mini',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.25,
       output: 2.00
@@ -218,7 +218,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gpt-5-nano',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.05,
       output: 0.40
@@ -236,7 +236,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'deepseek-chat',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.27,
       output: 1.10
@@ -250,7 +250,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'deepseek-reasoner',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[],
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[],
     pricing: {
       input: 0.55,
       output: 2.19
@@ -266,7 +266,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gemini-2.5-pro',
     maxTokens: 65536,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   {
     id: 'gemini-2-5-flash',
@@ -275,7 +275,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gemini-2.5-flash',
     maxTokens: 65536,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   },
   {
     id: 'gemini-2-5-flash-lite',
@@ -284,7 +284,7 @@ export const modelConfigs: ModelConfig[] = [
     modelId: 'gemini-2.5-flash-lite',
     maxTokens: 65536,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   }
 ];
 
@@ -346,17 +346,17 @@ export const initialPrompts: Record<string, Prompt[]> = {
       "isCustom": false
     }
   ],
-  "relationship_extraction": [
+  "relation_classification": [
     {
       "id": "re_prompt_1",
-      "name": "Basic Relationship Extraction",
+      "name": "Basic Relation Classification",
       "template": `Extract causal relationships from the following text based on the identified entities "{entities}": 
       {text}`,
       "isCustom": false
     },
     {
       "id": "re_prompt_2",
-      "name": "Structured Relationship Extraction",
+      "name": "Structured Relation Classification",
       "template": 
       `Text: "{text}"
       Entities: {entities}
@@ -375,7 +375,7 @@ export const jsonFormatTemplates = {
     },
     description: "Entity extraction returns a JSON object with an 'entities' array containing all identified causal entities from the text."
   },
-  relationship_extraction: {
+  relation_classification: {
 
     instructions: `Response Format (strict JSON): Return the output as a list of JSON objects with the following structure and do not output any other text or explanation.
 
@@ -469,7 +469,7 @@ export const SEMANTIC_EVAL_MODEL_CONFIG: ModelConfig = {
     modelId: 'gpt-4-turbo-preview',
     maxTokens: 4000,
     temperature: 0.0,
-    supportedTasks: ['entity_extraction', 'relationship_extraction'] as TaskType[]
+    supportedTasks: ['entity_extraction', 'relation_classification'] as TaskType[]
   };
 
 

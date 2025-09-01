@@ -65,7 +65,7 @@ class ProxyAnthropicService implements ProxyLLMService {
           name: 'Claude 3 Haiku',
           provider: 'anthropic',
           modelId: 'claude-3-haiku-20240307',
-          supportedTasks: ['entity_extraction', 'relationship_extraction']
+          supportedTasks: ['entity_extraction', 'relation_classification']
         },
         temperature: 0.1,
         maxTokens: 10
@@ -146,7 +146,7 @@ class ProxyGoogleService implements ProxyLLMService {
           name: 'Gemini 2.5 Flash Lite',
           provider: 'google',
           modelId: 'gemini-2.5-flash-lite',
-          supportedTasks: ['entity_extraction', 'relationship_extraction']
+          supportedTasks: ['entity_extraction', 'relation_classification']
         },
         temperature: 0.1,
         maxTokens: 10
@@ -220,7 +220,7 @@ class ProxyDeepSeekService implements ProxyLLMService {
           name: 'DeepSeek-V3.1 Chat',
           provider: 'deepseek',
           modelId: 'deepseek-chat',
-          supportedTasks: ['entity_extraction', 'relationship_extraction']
+          supportedTasks: ['entity_extraction', 'relation_classification']
         },
         temperature: 0.1,
         maxTokens: 10
@@ -551,7 +551,7 @@ class ProxyOpenAIService implements ProxyLLMService {
           name: 'GPT-3.5 Turbo',
           provider: 'openai',
           modelId: 'gpt-3.5-turbo',
-          supportedTasks: ['entity_extraction', 'relationship_extraction']
+          supportedTasks: ['entity_extraction', 'relation_classification']
         },
         temperature: 0.1,
         maxTokens: 10

@@ -28,7 +28,7 @@ const areRelationshipsEqual = (rel1: CausalRelationship, rel2: CausalRelationshi
  * Both standard and semantic matching metrics return the same 6-field structure.
  * 
  * @param sentenceResults - Array of sentence-level prediction results from the model
- * @param task - Type of extraction task ('entity_extraction' or 'relationship_extraction')
+ * @param task - Type of extraction task ('entity_extraction' or 'relation_classification')
  * @param evaluationMetrics - Array of metric configurations with enabled/disabled status
  * @returns Promise<Object> containing precision, recall, F1 score, and counts of TP/FP/FN
  */

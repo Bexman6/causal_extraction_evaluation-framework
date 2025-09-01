@@ -1,0 +1,187 @@
+{
+  "textBlocks": [
+    {
+      "id": "Leon",
+      "text": "3.2.1. Cardiovascular Disease \n The link between mental disorders and coronary heart disease has been highlighted in several studies, and it has been suggested to be bidirectional, that is both may cause one another [34]. Moreover, cardiovascular disease is the main cause of death in patients with psychotic disorders [35]. There is evidence that patients with schizophrenia die about 10 years earlier than the general population due to cardiovascular disease, including coronary heart disease [36]. According to a large-scale meta-analysis, which processed data from 3,211,768 patients and 113,383,368 controls, patients with SMI have 53% higher risk to suffer a cardiovascular disease; 78% higher risk to develop cardiovascular disease; and 85% higher risk of dying by cardiovascular disease compared to country-standardized general population [37]. Importantly, mortality due to cardiovascular disease in patients with schizophrenia did not decrease over the last decades, in spite of the general trend of decreasing mortality rates from cardiovascular disease worldwide [36]. \nA recent systematic review of the literature on the outcomes of acute coronary syndrome in patients with schizophrenia yielded similar results. Mortality and major adverse cardiac events as well as stroke were more prevalent in patients with a schizophrenia diagnosis compared to those without. The difference could be partly explained by patients’ co-morbidities (e.g., diabetes, obesity) and patients’ habits, such as smoking and substance abuse. Additionally, schizophrenia patients received suboptimal care, in terms of revascularization, secondary prevention measures, including the prescription of statins, beta-blockers, and anti-platelets and follow-up, compared to patients without a psychiatric diagnosis [38]. Other factors such as poor health literacy, treatment nonadherence, substance abuse and lower socioeconomic status may also contribute to worse cardiovascular outcomes, whereas those patients may have several barriers to access the healthcare system and may experience disparities that undermine optimal care [39]",
+      "gold_entities": [
+        "schizophrenia",
+        "cardiovascular disease",
+        "death",
+        "stroke",
+        "major cardiac events",
+        "diabetes",
+        "obesity",
+        "smoking",
+        "substance abuse",
+        "suboptimal care",
+        "poor health literacy",
+        "treatment nonadherence",
+        "lower socioeconomic status",
+        "barriers to access the healthcare system",
+        "disparities"
+      ],
+      "gold_relationships": [
+        {
+          "cause": "schizophrenia",
+          "effect": "diabetes"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "obesity"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "smoking"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "substance abuse"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "lower socioeconomic status"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "treatment nonadherence"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "barriers to access the healthcare system"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "disparities"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "cardiovascular disease"
+        },
+        {
+          "cause": "cardiovascular disease",
+          "effect": "death"
+        },
+        {
+          "cause": "cardiovascular disease",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "schizophrenia",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "diabetes",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "diabetes",
+          "effect": "stroke"
+        },
+        {
+          "cause": "diabetes",
+          "effect": "death"
+        },
+        {
+          "cause": "major cardiac events",
+          "effect": "death"
+        },
+        {
+          "cause": "obesity",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "obesity",
+          "effect": "stroke"
+        },
+        {
+          "cause": "obesity",
+          "effect": "death"
+        },
+        {
+          "cause": "smoking",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "smoking",
+          "effect": "stroke"
+        },
+        {
+          "cause": "smoking",
+          "effect": "death"
+        },
+        {
+          "cause": "smoking",
+          "effect": "cardiovascular disease"
+        },
+        {
+          "cause": "stroke",
+          "effect": "death"
+        },
+        {
+          "cause": "substance abuse",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "substance abuse",
+          "effect": "stroke"
+        },
+        {
+          "cause": "substance abuse",
+          "effect": "death"
+        },
+        {
+          "cause": "poor health literacy",
+          "effect": "suboptimal care"
+        },
+        {
+          "cause": "treatment nonadherence",
+          "effect": "cardiovascular disease"
+        },
+        {
+          "cause": "substance abuse",
+          "effect": "cardiovascular disease"
+        },
+        {
+          "cause": "lower socioeconomic status",
+          "effect": "cardiovascular disease"
+        },
+        {
+          "cause": "lower socioeconomic status",
+          "effect": "poor health literacy"
+        },
+        {
+          "cause": "barriers to access the healthcare system",
+          "effect": "suboptimal care"
+        },
+        {
+          "cause": "disparities",
+          "effect": "suboptimal care"
+        },
+        {
+          "cause": "suboptimal care",
+          "effect": "major cardiac events"
+        },
+        {
+          "cause": "suboptimal care",
+          "effect": "stroke"
+        },
+        {
+          "cause": "suboptimal care",
+          "effect": "death"
+        },
+        {
+          "cause": "suboptimal care",
+          "effect": "cardiovascular disease"
+        },
+        {
+          "cause": "lower socioeconomic status",
+          "effect": "barriers to access the healthcare system"
+        },
+        {
+          "cause": "lower socioeconomic status",
+          "effect": "disparities"
+        }
+      ]
+    }
+  ]
+}

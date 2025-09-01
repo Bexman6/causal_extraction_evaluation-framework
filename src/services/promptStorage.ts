@@ -14,7 +14,7 @@ interface StoredPrompts {
 // localStorage key for storing prompt data
 const STORAGE_KEY = 'causal-extraction-prompts';
 // Current version for data migration handling
-const CURRENT_VERSION = '1.0';
+const CURRENT_VERSION = '1.1';
 
 /**
  * Service for managing persistent storage of prompts in localStorage
@@ -58,9 +58,18 @@ export class PromptStorageService {
 
       const parsedData: StoredPrompts = JSON.parse(stored);
       
-      // Check version compatibility for future migrations
+      // Check version compatibility and handle migrations
       if (parsedData.version !== this.version) {
-        console.warn('Prompt storage version mismatch, using defaults');
+        console.warn(`Prompt storage version mismatch (stored: ${parsedData.version}, current: ${this.version})`);
+        
+        // Handle migration from 1.0 to 1.1 (relationship_extraction -> relation_classification)
+        if (parsedData.version === '1.0' && this.version === '1.1') {
+          const migratedPrompts = this.migrateV1ToV11(parsedData.prompts);
+          console.log('Migrated prompts from v1.0 to v1.1');
+          return this.mergeWithDefaults(migratedPrompts, new Set(parsedData.deletedBuiltInPrompts || []));
+        }
+        
+        // For other version mismatches, use defaults
         return this.getDefaultPrompts();
       }
 
@@ -256,5 +265,34 @@ export class PromptStorageService {
    */
   static resetToDefaults(): void {
     this.clearStorage();
+  }
+
+  /**
+   * Migrates prompt data from version 1.0 to 1.1
+   * Changes 'relationship_extraction' key to 'relation_classification'
+   * @param oldPrompts - Prompts data with v1.0 structure
+   * @returns Migrated prompts data with v1.1 structure
+   */
+  private static migrateV1ToV11(oldPrompts: Record<string, Prompt[]>): Record<string, Prompt[]> {
+    const migratedPrompts: Record<string, Prompt[]> = {};
+    
+    // Copy entity_extraction as-is
+    if (oldPrompts.entity_extraction) {
+      migratedPrompts.entity_extraction = oldPrompts.entity_extraction;
+    }
+    
+    // Migrate relationship_extraction -> relation_classification
+    if (oldPrompts.relationship_extraction) {
+      migratedPrompts.relation_classification = oldPrompts.relationship_extraction;
+    }
+    
+    // Copy any other task types as-is (for future extensibility)
+    for (const [taskType, prompts] of Object.entries(oldPrompts)) {
+      if (taskType !== 'entity_extraction' && taskType !== 'relationship_extraction') {
+        migratedPrompts[taskType] = prompts;
+      }
+    }
+    
+    return migratedPrompts;
   }
 }

@@ -43,7 +43,7 @@ export const JsonFormatPreviewModal: React.FC<JsonFormatPreviewModalProps> = ({
           {/* Task Information */}
           <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
             <h4 className="font-medium text-gray-800 mb-2">
-              Task: {selectedTask === 'entity_extraction' ? 'Causal Entity Extraction' : 'Causal Relationship Extraction'}
+              Task: {selectedTask === 'entity_extraction' ? 'Causal Entity Extraction' : 'Causal Relation Classification'}
             </h4>
             <p className="text-sm text-gray-600 leading-relaxed">{formatData.description}</p>
           </div>
