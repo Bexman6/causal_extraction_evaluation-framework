@@ -72,7 +72,7 @@ export interface EvaluationResult {
   promptTemplate: string;
   model: string;
   dataset: string;
-  task: 'entity_extraction' | 'relation_classification';
+  task: 'entity_extraction' | 'relation_classification' | 'single_prompt_full_causal_extraction';
   timestamp: string;
   metrics: EvaluationMetrics;
   sentenceResults: SentenceResult[];
@@ -85,7 +85,7 @@ export interface EvaluationRun {
   results: EvaluationResult[];
 }
 
-export type TaskType = 'entity_extraction' | 'relation_classification';
+export type TaskType = 'entity_extraction' | 'relation_classification' | 'single_prompt_full_causal_extraction';
 export interface EvaluationMetric {
   id: string;
   name: string;

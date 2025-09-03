@@ -4,6 +4,8 @@ import { TaskType, Prompt, EvaluationMetric } from '../types';
 import { modelConfigs } from '../constants';
 import { AddPromptModal } from './AddPromptModal';
 import { JsonFormatPreviewModal } from './JsonFormatPreviewModal';
+import { ModelTaskWarningModal, shouldShowModelTaskWarning } from './ModelTaskWarningModal';
+import { validateModelTaskSelections, ModelInfo } from '../utils/modelTaskValidation';
 
 interface SetupTabProps {
   selectedTask: TaskType;
@@ -69,6 +71,9 @@ export const SetupTab: React.FC<SetupTabProps> = ({
 }) => {
   const [selectedMetricSets, setSelectedMetricSets] = useState<string[]>(['standard_semantic_matching']);
   const [showJsonPreview, setShowJsonPreview] = useState(false);
+  const [showTaskWarning, setShowTaskWarning] = useState(false);
+  const [incompatibleModels, setIncompatibleModels] = useState<ModelInfo[]>([]);
+  const [sliderValue, setSliderValue] = useState(1);
 
   const getProviderIcon = (provider: 'anthropic' | 'openai' | 'google' | 'deepseek') => {
     if (apiKeyStatus.loading) {
@@ -124,6 +129,26 @@ export const SetupTab: React.FC<SetupTabProps> = ({
     );
   };
 
+  const validateAndWarnIfNeeded = (models: string[], task: TaskType) => {
+    // Skip if warnings are disabled for this session
+    if (!shouldShowModelTaskWarning()) {
+      return;
+    }
+
+    const validation = validateModelTaskSelections(models, task);
+    if (validation.incompatible.length > 0) {
+      setIncompatibleModels(validation.incompatible);
+      setShowTaskWarning(true);
+    }
+  };
+
+  const handleRemoveIncompatibleModels = () => {
+    const validation = validateModelTaskSelections(selectedModels, selectedTask);
+    const compatibleModelIds = validation.compatible;
+    setSelectedModels(compatibleModelIds);
+    setShowTaskWarning(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
@@ -136,6 +161,7 @@ export const SetupTab: React.FC<SetupTabProps> = ({
               onChange={() => {
                 setSelectedTask('entity_extraction');
                 setSelectedPrompts([]);
+                validateAndWarnIfNeeded(selectedModels, 'entity_extraction');
               }}
               className="text-blue-600"
             />
@@ -148,10 +174,24 @@ export const SetupTab: React.FC<SetupTabProps> = ({
               onChange={() => {
                 setSelectedTask('relation_classification');
                 setSelectedPrompts([]);
+                validateAndWarnIfNeeded(selectedModels, 'relation_classification');
               }}
               className="text-blue-600"
             />
             <span>Causal Relation Classification</span>
+          </label>
+          <label className="flex items-center space-x-3">
+            <input
+              type="radio"
+              checked={selectedTask === 'single_prompt_full_causal_extraction'}
+              onChange={() => {
+                setSelectedTask('single_prompt_full_causal_extraction');
+                setSelectedPrompts([]);
+                validateAndWarnIfNeeded(selectedModels, 'single_prompt_full_causal_extraction');
+              }}
+              className="text-blue-600"
+            />
+            <span>Single Prompt Full Causal Extraction</span>
           </label>
         </div>
       </div>
@@ -167,6 +207,34 @@ export const SetupTab: React.FC<SetupTabProps> = ({
             <option key={key} value={key}>{key}</option>
           ))}
         </select>
+        
+        {/* Text block count display */}
+        {selectedDataset && uploadedData[selectedDataset] && (
+          <p className="text-sm text-gray-600 mt-2">
+            Selected dataset contains {uploadedData[selectedDataset].textBlocks?.length || 0} text blocks
+          </p>
+        )}
+        
+        {/* Slider */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Textblock amount per prompt: {sliderValue}
+          </label>
+          <input 
+            type="range" 
+            min="1" 
+            max="4" 
+            value={sliderValue}
+            onChange={(e) => setSliderValue(Number(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
@@ -276,7 +344,6 @@ export const SetupTab: React.FC<SetupTabProps> = ({
         <AddPromptModal
           newPrompt={newPrompt}
           setNewPrompt={setNewPrompt}
-          onAddPrompt={onAddPrompt}
           onClose={onResetEditPromptForm || (() => {})}
           isEditMode={true}
           onUpdatePrompt={onUpdatePrompt}
@@ -287,6 +354,15 @@ export const SetupTab: React.FC<SetupTabProps> = ({
         selectedTask={selectedTask}
         show={showJsonPreview}
         onClose={() => setShowJsonPreview(false)}
+      />
+
+      <ModelTaskWarningModal
+        show={showTaskWarning}
+        onClose={() => setShowTaskWarning(false)}
+        incompatibleModels={incompatibleModels}
+        selectedTask={selectedTask}
+        onRemoveIncompatibleModels={handleRemoveIncompatibleModels}
+        onProceedAnyway={() => setShowTaskWarning(false)}
       />
 
       <div className="bg-white rounded-lg shadow p-6">
@@ -406,9 +482,13 @@ export const SetupTab: React.FC<SetupTabProps> = ({
                         disabled={!providerValid}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedModels(prev => [...prev, model.id]);
+                            const newModels = [...selectedModels, model.id];
+                            setSelectedModels(newModels);
+                            validateAndWarnIfNeeded(newModels, selectedTask);
                           } else {
-                            setSelectedModels(prev => prev.filter(m => m !== model.id));
+                            const newModels = selectedModels.filter(m => m !== model.id);
+                            setSelectedModels(newModels);
+                            // No need to validate when removing models
                           }
                         }}
                         className="text-blue-600"

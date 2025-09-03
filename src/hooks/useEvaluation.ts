@@ -4,6 +4,7 @@ import { calculateMetrics } from '../utils/metrics';
 import { processEvaluationWithLLM } from '../utils/evaluation';
 import { modelConfigs, jsonFormatTemplates } from '../constants';
 import { EvaluationStorageService } from '../services/evaluationStorage';
+import { validateModelTaskSelections, getIncompatibilityWarningMessage, getTaskDisplayName } from '../utils/modelTaskValidation';
 
 export const useEvaluation = () => {
   const [currentRun, setCurrentRun] = useState<EvaluationRun | null>(null);
@@ -65,12 +66,43 @@ export const useEvaluation = () => {
       return;
     }
     
+    // Validate model-task compatibility before starting evaluation
+    const validation = validateModelTaskSelections(selectedModels, selectedTask);
+    let modelsToUse = selectedModels;
+    
+    if (validation.incompatible.length > 0) {
+      const taskDisplayName = getTaskDisplayName(selectedTask);
+      const warningMessage = getIncompatibilityWarningMessage(validation.incompatible, taskDisplayName);
+      
+      const proceed = window.confirm(
+        `${warningMessage}\n\nDo you want to proceed with only the compatible models (${validation.compatible.length} models) or cancel the evaluation?\n\nClick OK to proceed with compatible models only, or Cancel to abort.`
+      );
+      
+      if (!proceed) {
+        setIsRunning(false);
+        return;
+      }
+      
+      // Use only compatible models for evaluation
+      if (validation.compatible.length === 0) {
+        const error = 'No compatible models found for the selected task. Evaluation cancelled.';
+        console.error(error);
+        alert(error);
+        setIsRunning(false);
+        return;
+      }
+      
+      // Use only compatible models
+      modelsToUse = validation.compatible;
+      console.log(`Proceeding with ${modelsToUse.length} compatible models:`, modelsToUse);
+    }
+
     const runId = Date.now().toString();
     const results: EvaluationResult[] = [];
     const sentences = uploadedData[selectedDataset].textBlocks;
     
     // Calculate total operations for progress tracking (each sentence needs to be processed for each prompt-model combination)
-    const totalOperations = selectedPrompts.length * selectedModels.length * sentences.length;
+    const totalOperations = selectedPrompts.length * modelsToUse.length * sentences.length;
    
     // Reset progress
     setProgress({
@@ -86,7 +118,7 @@ export const useEvaluation = () => {
         if (!prompt) continue;
         
         let modelIndex = 0;
-        for (const modelId of selectedModels) {
+        for (const modelId of modelsToUse) {
           const modelConfig = modelConfigs.find(m => m.id === modelId);
           if (!modelConfig) continue;
 
@@ -115,7 +147,7 @@ export const useEvaluation = () => {
               prompt.name,
               (completedSentences, _totalSentences, currentSentence) => {
                 // Calculate global progress based on current position across all combinations
-                const completedCombinations = promptIndex * selectedModels.length + modelIndex;
+                const completedCombinations = promptIndex * modelsToUse.length + modelIndex;
                 const sentencesInCompletedCombinations = completedCombinations * sentences.length;
                 const currentCombinationProgress = completedSentences;
                 const totalCompleted = sentencesInCompletedCombinations + currentCombinationProgress;

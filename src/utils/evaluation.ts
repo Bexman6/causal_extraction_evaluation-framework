@@ -31,10 +31,11 @@ export const processEvaluationWithLLM = async (
         task: task === 'entity_extraction' ? 'entities' : 'relationships'
       };
 
-      // Add entities variable for relationship extraction
+      // Add entities variable for relationship extraction (but not for full causal extraction)
       if (task === 'relation_classification') {
         variables.entities = sentence.gold_entities.join(', ');
       }
+      // Note: single_prompt_full_causal_extraction doesn't need entities variable as it extracts directly from text
 
       const prompt = substitutePromptVariables(promptTemplate, variables);
 

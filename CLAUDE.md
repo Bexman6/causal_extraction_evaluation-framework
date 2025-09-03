@@ -16,9 +16,10 @@ The entire application is contained in a single React component (`causal-extract
 
 ### Core Functionality
 
-The framework supports two main NLP tasks:
+The framework supports three main NLP tasks:
 1. **Causal Entity Extraction**: Identifying entities involved in causal relationships
-2. **Causal Relation Classification**: Extracting cause-effect relationships from text
+2. **Causal Relation Classification**: Extracting cause-effect relationships from text based on pre-identified entities
+3. **Single Prompt Full Causal Extraction**: Directly extracting causal relationships from text in a single step without separate entity extraction
 
 ### Key Components
 

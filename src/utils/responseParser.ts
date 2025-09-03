@@ -272,6 +272,7 @@ export const parseResponse = (response: string, task: TaskType): any[] => {
     const parsed = parseEntityExtractionResponse(responseStr);
     return parsed.entities;
   } else {
+    // Both relation_classification and single_prompt_full_causal_extraction use relationship parsing
     const parsed = parseRelationshipExtractionResponse(responseStr);
     return parsed.relationships;
   }
@@ -283,6 +284,7 @@ export const validateParsedResponse = (parsed: any[], task: TaskType): boolean =
   if (task === 'entity_extraction') {
     return parsed.every(item => typeof item === 'string' && item.length > 0);
   } else {
+    // Both relation_classification and single_prompt_full_causal_extraction validate relationships
     return parsed.every(item => 
       item && 
       typeof item === 'object' && 

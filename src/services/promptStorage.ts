@@ -14,7 +14,7 @@ interface StoredPrompts {
 // localStorage key for storing prompt data
 const STORAGE_KEY = 'causal-extraction-prompts';
 // Current version for data migration handling
-const CURRENT_VERSION = '1.1';
+const CURRENT_VERSION = '1.2';
 
 /**
  * Service for managing persistent storage of prompts in localStorage
@@ -63,9 +63,17 @@ export class PromptStorageService {
         console.warn(`Prompt storage version mismatch (stored: ${parsedData.version}, current: ${this.version})`);
         
         // Handle migration from 1.0 to 1.1 (relationship_extraction -> relation_classification)
-        if (parsedData.version === '1.0' && this.version === '1.1') {
-          const migratedPrompts = this.migrateV1ToV11(parsedData.prompts);
-          console.log('Migrated prompts from v1.0 to v1.1');
+        if (parsedData.version === '1.0' && this.version === '1.2') {
+          let migratedPrompts = this.migrateV1ToV11(parsedData.prompts);
+          migratedPrompts = this.migrateV11ToV12(migratedPrompts);
+          console.log('Migrated prompts from v1.0 to v1.2 (via v1.1)');
+          return this.mergeWithDefaults(migratedPrompts, new Set(parsedData.deletedBuiltInPrompts || []));
+        }
+        
+        // Handle migration from 1.1 to 1.2 (add single_prompt_full_causal_extraction task type)
+        if (parsedData.version === '1.1' && this.version === '1.2') {
+          const migratedPrompts = this.migrateV11ToV12(parsedData.prompts);
+          console.log('Migrated prompts from v1.1 to v1.2');
           return this.mergeWithDefaults(migratedPrompts, new Set(parsedData.deletedBuiltInPrompts || []));
         }
         
@@ -291,6 +299,23 @@ export class PromptStorageService {
       if (taskType !== 'entity_extraction' && taskType !== 'relationship_extraction') {
         migratedPrompts[taskType] = prompts;
       }
+    }
+    
+    return migratedPrompts;
+  }
+
+  /**
+   * Migrates prompt data from version 1.1 to 1.2
+   * Adds empty 'single_prompt_full_causal_extraction' task type (will be filled from defaults)
+   * @param oldPrompts - Prompts data with v1.1 structure
+   * @returns Migrated prompts data with v1.2 structure
+   */
+  private static migrateV11ToV12(oldPrompts: Record<string, Prompt[]>): Record<string, Prompt[]> {
+    const migratedPrompts: Record<string, Prompt[]> = { ...oldPrompts };
+    
+    // Add empty single_prompt_full_causal_extraction array (will be populated from defaults during merge)
+    if (!migratedPrompts.single_prompt_full_causal_extraction) {
+      migratedPrompts.single_prompt_full_causal_extraction = [];
     }
     
     return migratedPrompts;

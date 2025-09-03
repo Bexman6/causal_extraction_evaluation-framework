@@ -15,7 +15,7 @@ class AnthropicService implements LLMService {
       name: 'Anthropic',
       provider: 'anthropic',
       modelId: 'claude-3-7-sonnet-20250219',
-      supportedTasks: ['entity_extraction', 'relation_classification']
+      supportedTasks: ['entity_extraction', 'relation_classification', 'single_prompt_full_causal_extraction']
     });
   }
 
@@ -37,7 +37,7 @@ class OpenAIService implements LLMService {
       name: 'OpenAI',
       provider: 'openai',
       modelId: 'gpt-3.5-turbo',
-      supportedTasks: ['entity_extraction', 'relation_classification']
+      supportedTasks: ['entity_extraction', 'relation_classification', 'single_prompt_full_causal_extraction']
     });
   }
 
@@ -59,7 +59,7 @@ class GoogleService implements LLMService {
       name: 'Google',
       provider: 'google',
       modelId: 'gemini-2.5-flash-lite',
-      supportedTasks: ['entity_extraction', 'relation_classification']
+      supportedTasks: ['entity_extraction', 'relation_classification', 'single_prompt_full_causal_extraction']
     });
   }
 
@@ -81,7 +81,7 @@ class DeepSeekService implements LLMService {
       name: 'DeepSeek',
       provider: 'deepseek',
       modelId: 'deepseek-chat',
-      supportedTasks: ['entity_extraction', 'relation_classification']
+      supportedTasks: ['entity_extraction', 'relation_classification', 'single_prompt_full_causal_extraction']
     });
   }
 
